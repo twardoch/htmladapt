@@ -35,25 +35,24 @@ ruff check htmladapt/
 
 ### Codebase Structure
 
+The codebase is organized as follows:
+
 ```
 htmladapt/
-├── core/
-│   ├── parser.py          # HTML parsing
-│   ├── extractor.py       # Content extraction
-│   ├── matcher.py         # Element matching
-│   └── merger.py          # Content merging
-├── algorithms/
-│   ├── id_generation.py   # ID generation
-│   ├── tree_diff.py       # Tree comparison
-│   └── fuzzy_match.py     # Similarity scoring
-├── llm/
-│   ├── reconciler.py      # LLM integration
-│   └── prompts.py        # Prompt templates
-├── utils/
-│   ├── html_utils.py      # HTML utilities
-│   └── performance.py    # Performance tools
+├── src/
+│   └── htmladapt/
+│       ├── __init__.py
+│       ├── __main__.py
+│       ├── config.py
+│       ├── id_generation.py
+│       ├── matcher.py
+│       ├── parser.py
+│       └── tool.py
 └── tests/
-    ├── unit/             # Unit tests
-    ├── integration/      # Integration tests
-    └── benchmarks/       # Performance benchmarks
+    ├── test_config.py
+    ├── test_extractor_merger.py
+    ├── test_id_generation.py
+    ├── test_integration.py
+    ├── test_package.py
+    └── test_parser.py
 ```

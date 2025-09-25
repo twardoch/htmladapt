@@ -1,27 +1,22 @@
-# HTMLAdapt: HTML Content Extraction and Merge Tool
+---
+layout: default
+title: Home
+nav_order: 1
+---
 
-HTMLAdapt is a Python tool for bidirectional HTML transformation. It extracts content for editing while preserving document structure, then merges changes back without breaking formatting. Useful for translation, content updates, and HTML processing where layout must stay intact.
+# HTMLAdapt: Intelligent HTML Content Extraction and Merge Tool
 
-## Why HTMLAdapt?
-
-Editing complex HTML documents directly is risky:
-
-- Manual edits often break CSS or JavaScript
-- Basic find-and-replace can't handle nested tags
-- Most tools strip important markup or scramble the layout
-- Translation software usually messes up HTML unless you enjoy cleanup duty
-
-HTMLAdapt avoids these issues by maintaining structure throughout the edit-merge cycle.
+HTMLAdapt is a Python-based tool for bidirectional HTML document transformation that preserves structural integrity while enabling seamless content modification through an intermediate representation. Perfect for translation workflows, content editing, and HTML processing where maintaining original formatting and styling is critical.
 
 ## How It Works
 
-The process has two steps:
+HTMLAdapt implements a sophisticated two-phase workflow:
 
-### 1. Extract
-Converts the source HTML into two parts:
+### 1. Extract Phase
+Transforms a complex original HTML document into two complementary representations:
 
-- **Superset**: Original HTML with unique IDs added to all text elements
-- **Subset**: Minimal version with only translatable content, tagged with matching IDs
+- Superset Document: The original HTML enhanced with unique IDs on all text-containing elements
+- Subset Document: A lightweight version containing only translatable content with preserved IDs
 
 ```python
 from htmladapt import HTMLExtractMergeTool
@@ -30,8 +25,8 @@ tool = HTMLExtractMergeTool()
 map_html, comp_html = tool.extract(original_html)
 ```
 
-### 2. Merge
-Reapplies edited content from the subset to the superset using smart reconciliation:
+### 2. Merge Phase
+Intelligently recombines edited content with the original structure using advanced reconciliation algorithms:
 
 ```python
 final_html = tool.merge(
@@ -44,25 +39,20 @@ final_html = tool.merge(
 
 ## Key Features
 
-### Structure Preservation
-Keeps original HTML layout, classes, scripts, and styles untouched during content edits.
+Maintains all original HTML structure, CSS classes, JavaScript references, and formatting while allowing content modification.
 
-### Smart Element Matching
-Matches text elements across versions using:
-- Exact ID matching when possible
-- Content hashing for similarity detection
-- Fuzzy logic for modified text
-- LLMs for tricky edge cases (optional)
+Uses multiple sophisticated algorithms to match content between versions:
+- Perfect ID matching for unchanged elements
+- Hash-based signatures for content similarity
+- Fuzzy matching for modified text
+- LLM integration for ambiguous cases
 
-### Fast Processing
-Built for speed and efficiency:
-- Uses lxml for parsing (faster than standard libraries)
-- Hash-based matching runs in linear time
-- Low memory footprint
-- Configurable performance settings
+Optimized for large documents with:
+- lxml parser for speed (2-3x faster than alternatives)
+- O(n) hash-based matching for most cases
+- Memory-efficient processing
+- Configurable performance profiles
 
-### Conflict Resolution
-Optional LLM integration resolves ambiguous matches that algorithms can't sort out.
+Integrates with Large Language Models to resolve complex matching scenarios that pure algorithms cannot handle.
 
-### Error Resilience
-Handles broken HTML, deep nesting, and other messes without crashing. Includes fallback strategies for worst-case inputs.
+Handles malformed HTML, deeply nested structures, and edge cases gracefully with comprehensive fallback mechanisms.
