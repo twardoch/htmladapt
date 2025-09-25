@@ -23,7 +23,7 @@ class HTMLExtractMergeTool:
 
     def __init__(
         self,
-        config: Optional[ProcessingConfig] = None,
+        config: ProcessingConfig | None = None,
         llm_reconciler=None  # Optional LLM integration
     ) -> None:
         """Initialize the HTMLExtractMergeTool.
@@ -42,7 +42,7 @@ class HTMLExtractMergeTool:
 
         logger.info(f"Initialized HTMLExtractMergeTool with profile: {self.config.performance_profile}")
 
-    def extract(self, html: str) -> Tuple[str, str]:
+    def extract(self, html: str) -> tuple[str, str]:
         """Extract content from HTML document.
 
         Creates both a superset document (original with IDs) and subset document
@@ -202,8 +202,10 @@ class HTMLExtractMergeTool:
         # Check if element has direct text content (not just child element text)
         direct_text = ""
         for content in element.contents:
-            if hasattr(content, 'strip') and content.strip():
-                direct_text += content.strip()
+            if hasattr(content, 'strip') and callable(getattr(content, 'strip', None)):
+                text = content.strip()
+                if text:
+                    direct_text += text
 
         return bool(direct_text)
 
@@ -231,7 +233,7 @@ class HTMLExtractMergeTool:
             # Get text from immediate children only, not nested elements
             texts = []
             for content in element.contents:
-                if hasattr(content, 'strip'):  # NavigableString
+                if hasattr(content, 'strip') and callable(getattr(content, 'strip', None)):  # NavigableString
                     text = content.strip()
                     if text:
                         texts.append(text)
@@ -290,7 +292,7 @@ class HTMLExtractMergeTool:
                         if new_text:
                             # Clear only text content, keep child elements
                             for content in list(superset_elem.contents):
-                                if hasattr(content, 'strip'):  # It's a NavigableString
+                                if hasattr(content, 'strip') and callable(getattr(content, 'strip', None)):  # It's a NavigableString
                                     content.extract()
 
                             # Add new text at the beginning
@@ -316,7 +318,7 @@ class HTMLExtractMergeTool:
 
         return soup
 
-    def validate_html(self, content: str) -> Tuple[bool, list[str]]:
+    def validate_html(self, content: str) -> tuple[bool, list[str]]:
         """Validate HTML content.
 
         Args:

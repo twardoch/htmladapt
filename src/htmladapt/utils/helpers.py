@@ -9,7 +9,7 @@ from htmladapt.core.parser import HTMLParser
 logger = logging.getLogger(__name__)
 
 
-def validate_html(content: str) -> Tuple[bool, List[str]]:
+def validate_html(content: str) -> tuple[bool, list[str]]:
     """Validate HTML content and return any parsing issues.
 
     Args:
@@ -22,7 +22,7 @@ def validate_html(content: str) -> Tuple[bool, List[str]]:
     return parser.validate_html(content)
 
 
-def estimate_processing_time(content: str) -> Tuple[float, int]:
+def estimate_processing_time(content: str) -> tuple[float, int]:
     """Estimate processing time and memory requirements for HTML content.
 
     Args:

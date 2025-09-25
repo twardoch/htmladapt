@@ -44,9 +44,9 @@ class LLMReconciler:
     def resolve_conflict(
         self,
         edited_content: str,
-        original_candidates: List[str],
-        context: Optional[Dict] = None
-    ) -> Dict:
+        original_candidates: list[str],
+        context: dict | None = None
+    ) -> dict:
         """Resolve matching conflict using LLM.
 
         Args:
@@ -91,8 +91,8 @@ class LLMReconciler:
     def _build_resolution_prompt(
         self,
         edited_content: str,
-        original_candidates: List[str],
-        context: Optional[Dict] = None
+        original_candidates: list[str],
+        context: dict | None = None
     ) -> str:
         """Build prompt for LLM conflict resolution.
 
@@ -131,7 +131,7 @@ Respond with ONLY a JSON object:
 
         return prompt
 
-    def _parse_llm_response(self, response, num_candidates: int) -> Dict:
+    def _parse_llm_response(self, response, num_candidates: int) -> dict:
         """Parse LLM response into structured result.
 
         Args:

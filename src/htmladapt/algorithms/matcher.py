@@ -34,13 +34,13 @@ class ElementMatcher:
             similarity_threshold: Minimum similarity score for fuzzy matching
         """
         self.similarity_threshold = similarity_threshold
-        self._content_cache: Dict[str, str] = {}
+        self._content_cache: dict[str, str] = {}
 
     def match_elements(
         self,
-        edited_elements: List[Tag],
-        original_elements: List[Tag]
-    ) -> List[Tuple[Optional[Tag], Optional[Tag], float]]:
+        edited_elements: list[Tag],
+        original_elements: list[Tag]
+    ) -> list[tuple[Tag | None, Tag | None, float]]:
         """Match edited elements with original elements.
 
         Args:
@@ -252,7 +252,7 @@ class ElementMatcher:
         # Get normalized content for hashing
         content = self._get_element_text(element)
         tag_info = f"{element.name}:{element.attrs}"
-        hash_input = f"{tag_info}|{content}".encode('utf-8')
+        hash_input = f"{tag_info}|{content}".encode()
 
         if xxhash:
             content_hash = xxhash.xxh64(hash_input).hexdigest()

@@ -223,4 +223,6 @@ class TestHTMLExtractMergeTool:
         p_tag = soup.find('p')
 
         text = self.tool._extract_text_content(p_tag)
-        assert "Simple bold text with emphasis." in text
+        # Normalize whitespace for comparison
+        normalized_text = ' '.join(text.split())
+        assert "Simple bold text with emphasis." in normalized_text

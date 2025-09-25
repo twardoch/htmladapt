@@ -16,7 +16,7 @@ class HTMLParser:
     (built-in) backends with automatic fallback on parsing errors.
     """
 
-    def __init__(self, parser_preference: Optional[list[str]] = None) -> None:
+    def __init__(self, parser_preference: list[str] | None = None) -> None:
         """Initialize the parser with preferred backend order.
 
         Args:
@@ -52,7 +52,7 @@ class HTMLParser:
 
         return available
 
-    def parse(self, content: Union[str, bytes], encoding: Optional[str] = None) -> BeautifulSoup:
+    def parse(self, content: str | bytes, encoding: str | None = None) -> BeautifulSoup:
         """Parse HTML content using the first available parser.
 
         Args:

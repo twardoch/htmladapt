@@ -37,14 +37,14 @@ class TestHTMLParser:
 
     def test_bytes_input_utf8(self):
         """Test parsing bytes input with UTF-8 encoding."""
-        html_bytes = "<html><body><p>Hello, World!</p></body></html>".encode('utf-8')
+        html_bytes = b"<html><body><p>Hello, World!</p></body></html>"
         soup = self.parser.parse(html_bytes)
 
         assert soup.find('p').get_text() == "Hello, World!"
 
     def test_bytes_input_with_encoding(self):
         """Test parsing bytes input with specified encoding."""
-        html_bytes = "<html><body><p>Hello, World!</p></body></html>".encode('utf-8')
+        html_bytes = b"<html><body><p>Hello, World!</p></body></html>"
         soup = self.parser.parse(html_bytes, encoding='utf-8')
 
         assert soup.find('p').get_text() == "Hello, World!"
@@ -100,7 +100,7 @@ class TestHTMLParser:
 
     def test_decode_content_utf8(self):
         """Test content decoding with UTF-8."""
-        content = "Hello, 世界!".encode('utf-8')
+        content = "Hello, 世界!".encode()
         decoded = self.parser._decode_content(content)
 
         assert decoded == "Hello, 世界!"

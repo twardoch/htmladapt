@@ -22,9 +22,9 @@ class IDGenerator:
         """
         self.prefix = prefix
         self._counter = 0
-        self._used_ids: Set[str] = set()
+        self._used_ids: set[str] = set()
 
-    def generate_id(self, element_hint: Optional[str] = None) -> str:
+    def generate_id(self, element_hint: str | None = None) -> str:
         """Generate a unique ID for an HTML element.
 
         Args:
