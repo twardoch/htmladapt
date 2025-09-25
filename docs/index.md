@@ -27,7 +27,7 @@ Converts the source HTML into two parts:
 from htmladapt import HTMLExtractMergeTool
 
 tool = HTMLExtractMergeTool()
-superset_html, subset_html = tool.extract(original_html)
+map_html, comp_html = tool.extract(original_html)
 ```
 
 ### 2. Merge
@@ -35,9 +35,9 @@ Reapplies edited content from the subset to the superset using smart reconciliat
 
 ```python
 final_html = tool.merge(
-    edited_subset_html,
-    original_subset_html,
-    superset_html,
+    edited_comp_html,
+    original_comp_html,
+    map_html,
     original_html
 )
 ```

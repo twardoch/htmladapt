@@ -17,7 +17,7 @@ class TestHTMLParser:
         html = "<html><body><p>Hello, World!</p></body></html>"
         soup = self.parser.parse(html)
 
-        assert soup.find('p').get_text() == "Hello, World!"
+        assert soup.find("p").get_text() == "Hello, World!"
 
     def test_malformed_html_parsing(self):
         """Test parsing of malformed HTML."""
@@ -25,7 +25,7 @@ class TestHTMLParser:
         soup = self.parser.parse(malformed_html)
 
         # Should still be parseable
-        assert soup.find('body') is not None
+        assert soup.find("body") is not None
 
     def test_empty_html_parsing(self):
         """Test parsing empty HTML."""
@@ -40,14 +40,14 @@ class TestHTMLParser:
         html_bytes = b"<html><body><p>Hello, World!</p></body></html>"
         soup = self.parser.parse(html_bytes)
 
-        assert soup.find('p').get_text() == "Hello, World!"
+        assert soup.find("p").get_text() == "Hello, World!"
 
     def test_bytes_input_with_encoding(self):
         """Test parsing bytes input with specified encoding."""
         html_bytes = b"<html><body><p>Hello, World!</p></body></html>"
-        soup = self.parser.parse(html_bytes, encoding='utf-8')
+        soup = self.parser.parse(html_bytes, encoding="utf-8")
 
-        assert soup.find('p').get_text() == "Hello, World!"
+        assert soup.find("p").get_text() == "Hello, World!"
 
     def test_parser_preference(self):
         """Test parser preference configuration."""
@@ -56,7 +56,7 @@ class TestHTMLParser:
         # Should work with html.parser (always available)
         html = "<html><body><p>Test</p></body></html>"
         soup = parser.parse(html)
-        assert soup.find('p').get_text() == "Test"
+        assert soup.find("p").get_text() == "Test"
 
     def test_available_parsers(self):
         """Test available parsers property."""
@@ -118,8 +118,8 @@ class TestHTMLParser:
     def test_decode_content_fallback(self):
         """Test content decoding with fallback to replacement."""
         # Create invalid UTF-8 bytes
-        invalid_bytes = b'\xff\xfe\x00\x00invalid'
+        invalid_bytes = b"\xff\xfe\x00\x00invalid"
         decoded = self.parser._decode_content(invalid_bytes)
 
-        # Should not raise exception and return something
+        # Should not raise exception and return somecompg
         assert isinstance(decoded, str)

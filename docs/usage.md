@@ -34,16 +34,16 @@ tool = HTMLExtractMergeTool(id_prefix="trans_")
 
 # Step 1: Extract content from original HTML
 original_html = open('document.html', 'r').read()
-superset_html, subset_html = tool.extract(original_html)
+map_html, comp_html = tool.extract(original_html)
 
 # Step 2: Edit the subset (e.g., translate or modify)
-edited_subset = subset_html.replace('Hello', 'Hola').replace('World', 'Mundo')
+cnew_path = comp_html.replace('Hello', 'Hola').replace('World', 'Mundo')
 
 # Step 3: Merge edited content back into the original structure
 final_html = tool.merge(
-    edited_subset,   # Modified content
-    subset_html,     # Original extracted subset
-    superset_html,   # Original HTML with added IDs
+    cnew_path,   # Modified content
+    comp_html,     # Original extracted subset
+    map_html,   # Original HTML with added IDs
     original_html    # Unchanged original HTML
 )
 
@@ -59,10 +59,10 @@ from htmladapt import HTMLExtractMergeTool, ProcessingConfig
 
 config = ProcessingConfig(
     id_prefix="my_prefix_",
-    similarity_threshold=0.8,
-    enable_llm_resolution=True,
-    llm_model="gpt-4o-mini",
-    performance_profile="accurate"  # Options: fast, balanced, accurate
+    simi_level=0.8,
+    llm_use=True,
+    model_llm="gpt-4o-mini",
+    perf="accurate"  # Options: fast, balanced, accurate
 )
 
 tool = HTMLExtractMergeTool(config=config)
@@ -83,7 +83,7 @@ llm = LLMReconciler(
 tool = HTMLExtractMergeTool(llm_reconciler=llm)
 
 # Ambiguous matches will now be resolved using the LLM
-final_html = tool.merge(edited_subset, subset_html, superset_html, original_html)
+final_html = tool.merge(cnew_path, comp_html, map_html, original_html)
 ```
 
 ## Use Cases

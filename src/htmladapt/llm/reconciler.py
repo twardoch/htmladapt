@@ -31,10 +31,7 @@ class LLMReconciler:
     """
 
     def __init__(
-        self,
-        api_key: str,
-        model: str = "gpt-4o-mini",
-        max_context_tokens: int = 1000
+        self, api_key: str, model: str = "gpt-4o-mini", max_context_tokens: int = 1000
     ) -> None:
         """Initialize the LLM reconciler.
 
@@ -50,6 +47,7 @@ class LLMReconciler:
         # Try to import OpenAI client
         try:
             from openai import OpenAI
+
             self.client = OpenAI(api_key=api_key)
             self._available = True
         except ImportError:
@@ -61,7 +59,7 @@ class LLMReconciler:
         self,
         edited_content: str,
         original_candidates: list[str],
-        context: dict | None = None
+        context: dict | None = None,
     ) -> dict:
         """Resolve matching conflict using LLM.
 
@@ -77,21 +75,19 @@ class LLMReconciler:
             return {
                 "best_match_index": None,
                 "confidence": 0.0,
-                "reasoning": "LLM reconciliation not available"
+                "reasoning": "LLM reconciliation not available",
             }
 
         try:
             prompt = self._build_resolution_prompt(
-                edited_content,
-                original_candidates,
-                context
+                edited_content, original_candidates, context
             )
 
-            response = self.client.chat.completions.create(
+            response = self.client.chat.cletions.create(
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
                 max_tokens=200,
-                temperature=0.1
+                temperature=0.1,
             )
 
             return self._parse_llm_response(response, len(original_candidates))
@@ -101,14 +97,14 @@ class LLMReconciler:
             return {
                 "best_match_index": None,
                 "confidence": 0.0,
-                "reasoning": f"LLM error: {str(e)}"
+                "reasoning": f"LLM error: {str(e)}",
             }
 
     def _build_resolution_prompt(
         self,
         edited_content: str,
         original_candidates: list[str],
-        context: dict | None = None
+        context: dict | None = None,
     ) -> str:
         """Build prompt for LLM conflict resolution.
 
@@ -163,7 +159,7 @@ Respond with ONLY a JSON object:
             content = response.choices[0].message.content.strip()
 
             # Try to extract JSON from response
-            if content.startswith('{') and content.endswith('}'):
+            if content.startswith("{") and content.endswith("}"):
                 result = json.loads(content)
 
                 # Validate response
@@ -172,13 +168,15 @@ Respond with ONLY a JSON object:
                     match_index = None
 
                 confidence = result.get("confidence", 0.0)
-                if not isinstance(confidence, (int, float)) or not (0.0 <= confidence <= 1.0):
+                if not isinstance(confidence, (int, float)) or not (
+                    0.0 <= confidence <= 1.0
+                ):
                     confidence = 0.0
 
                 return {
                     "best_match_index": match_index,
                     "confidence": float(confidence),
-                    "reasoning": result.get("reasoning", "LLM resolution")
+                    "reasoning": result.get("reasoning", "LLM resolution"),
                 }
 
         except Exception as e:
@@ -187,7 +185,7 @@ Respond with ONLY a JSON object:
         return {
             "best_match_index": None,
             "confidence": 0.0,
-            "reasoning": "Failed to parse LLM response"
+            "reasoning": "Failed to parse LLM response",
         }
 
     def is_available(self) -> bool:

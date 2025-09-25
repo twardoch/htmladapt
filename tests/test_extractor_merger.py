@@ -29,7 +29,7 @@ class TestHTMLExtractMergeTool:
         superset, subset = self.tool.extract(html)
 
         # Check that superset contains IDs
-        assert "auto_" in superset  # Generated IDs should be present
+        assert "xhq" in superset  # Generated IDs should be present
 
         # Check that subset contains translatable content
         assert "Main Title" in subset
@@ -54,7 +54,7 @@ class TestHTMLExtractMergeTool:
         assert 'id="existing"' in subset
 
         # New ID should be generated for paragraph without ID
-        assert "auto_" in superset
+        assert "xhq" in superset
 
     def test_basic_merge(self):
         """Test basic HTML merge operation."""
@@ -70,10 +70,10 @@ class TestHTMLExtractMergeTool:
         superset, subset = self.tool.extract(original_html)
 
         # Edit (simulate translation)
-        edited_subset = subset.replace("Original text", "Edited text")
+        cnew_path = subset.replace("Original text", "Edited text")
 
         # Merge
-        result = self.tool.merge(edited_subset, subset, superset, original_html)
+        result = self.tool.merge(cnew_path, subset, superset, original_html)
 
         # Check result
         assert "Edited text" in result
@@ -162,15 +162,11 @@ class TestHTMLExtractMergeTool:
         assert isinstance(stats, dict)
         assert "config_profile" in stats
         assert "available_parsers" in stats
-        assert "similarity_threshold" in stats
+        assert "simi_level" in stats
 
     def test_custom_config(self):
         """Test tool with custom configuration."""
-        config = ProcessingConfig(
-            id_prefix="custom_",
-            similarity_threshold=0.9,
-            performance_profile="accurate"
-        )
+        config = ProcessingConfig(id_prefix="custom_", simi_level=0.9, perf="accurate")
 
         tool = HTMLExtractMergeTool(config=config)
         html = "<html><body><p>Test text</p></body></html>"
@@ -218,9 +214,9 @@ class TestHTMLExtractMergeTool:
         """Test internal text extraction functionality."""
         from bs4 import BeautifulSoup
 
-        html = '<p>Simple <strong>bold</strong> text with <em>emphasis</em>.</p>'
-        soup = BeautifulSoup(html, 'html.parser')
-        p_tag = soup.find('p')
+        html = "<p>Simple <strong>bold</strong> text with <em>emphasis</em>.</p>"
+        soup = BeautifulSoup(html, "html.parser")
+        p_tag = soup.find("p")
 
         text = self.tool._extract_text_content(p_tag)
         # Check that the essential text is present (allowing for spacing differences)
@@ -242,12 +238,16 @@ class TestHTMLExtractMergeTool:
         superset, subset = self.tool.extract(original_html)
 
         # Translator replaces the entire paragraph with plain text, leaving nested entries untouched.
-        edited_subset = subset.replace("Prefix Inner Suffix", "Translated paragraph")
+        cnew_path = subset.replace("Prefix Inner Suffix", "Translated paragraph")
 
-        merged = self.tool.merge(edited_subset, subset, superset, original_html)
+        merged = self.tool.merge(cnew_path, subset, superset, original_html)
 
-        assert "Translated paragraph" in merged, "Translated text should appear in merged output"
-        assert "<strong>" not in merged, "Inline markup should be removed when translation drops it"
+        assert "Translated paragraph" in merged, (
+            "Translated text should appear in merged output"
+        )
+        assert "<strong>" not in merged, (
+            "Inline markup should be removed when translation drops it"
+        )
 
     def test_merge_uses_llm_reconciler_for_unmatched_elements(self):
         """Verify that the LLM reconciler resolves low-confidence matches when enabled."""
@@ -256,7 +256,9 @@ class TestHTMLExtractMergeTool:
             def __init__(self):
                 self.calls: list[tuple[str, list[str]]] = []
 
-            def resolve_conflict(self, edited_content, original_candidates, context=None):
+            def resolve_conflict(
+                self, edited_content, original_candidates, context=None
+            ):
                 self.calls.append((edited_content, original_candidates))
                 return {
                     "best_match_index": 0,
@@ -268,8 +270,8 @@ class TestHTMLExtractMergeTool:
                 return True
 
         config = ProcessingConfig(
-            enable_llm_resolution=True,
-            similarity_threshold=0.8,
+            llm_use=True,
+            simi_level=0.8,
             parser_preference=["html.parser"],
         )
 
@@ -288,15 +290,17 @@ class TestHTMLExtractMergeTool:
 
         from bs4 import BeautifulSoup
 
-        subset_soup = BeautifulSoup(subset, 'html.parser')
-        edited_entries = subset_soup.find_all('p')
+        comp_soup = BeautifulSoup(subset, "html.parser")
+        edited_entries = comp_soup.find_all("p")
         edited_entries[1].string = "Translated second paragraph."
-        if edited_entries[1].has_attr('id'):
-            del edited_entries[1]['id']  # Simulate an ID lost during translation
+        if edited_entries[1].has_attr("id"):
+            del edited_entries[1]["id"]  # Simulate an ID lost during translation
 
-        edited_subset = str(subset_soup)
+        cnew_path = str(comp_soup)
 
-        result = tool.merge(edited_subset, subset, superset, original_html)
+        result = tool.merge(cnew_path, subset, superset, original_html)
 
         assert "Translated second paragraph." in result
-        assert tool.llm_reconciler.calls, "LLM reconciler should be invoked for unmatched content"
+        assert tool.llm_reconciler.calls, (
+            "LLM reconciler should be invoked for unmatched content"
+        )

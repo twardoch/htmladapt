@@ -65,15 +65,15 @@ class TestIntegration:
             "Web Development": "Desarrollo Web",
             "Mobile Apps": "Aplicaciones Móviles",
             "Consulting": "Consultoría",
-            "All rights reserved.": "Todos los derechos reservados."
+            "All rights reserved.": "Todos los derechos reservados.",
         }
 
-        edited_subset = subset
+        cnew_path = subset
         for english, spanish in translations.items():
-            edited_subset = edited_subset.replace(english, spanish)
+            cnew_path = cnew_path.replace(english, spanish)
 
         # Step 3: Merge back
-        result = tool.merge(edited_subset, subset, superset, original_html)
+        result = tool.merge(cnew_path, subset, superset, original_html)
 
         # Verify merge results
         assert "Bienvenido a Nuestro Sitio Web" in result
@@ -84,7 +84,9 @@ class TestIntegration:
         # Verify structure preservation
         assert "<!DOCTYPE html>" in result
         assert '<html lang="en">' in result
-        assert 'charset="utf-8"' in result  # Accept both <meta charset="utf-8"> and <meta charset="utf-8"/>
+        assert (
+            'charset="utf-8"' in result
+        )  # Accept both <meta charset="utf-8"> and <meta charset="utf-8"/>
         assert "<header>" in result
         assert "<nav>" in result
         assert "<main>" in result
@@ -111,18 +113,18 @@ class TestIntegration:
         superset, subset = tool.extract(original_html)
 
         # Edit content
-        edited_subset = subset.replace("Old Article Title", "New Article Title")
-        edited_subset = edited_subset.replace(
+        cnew_path = subset.replace("Old Article Title", "New Article Title")
+        cnew_path = cnew_path.replace(
             "This is the old introduction paragraph.",
-            "This is the updated introduction with new information."
+            "This is the updated introduction with new information.",
         )
-        edited_subset = edited_subset.replace(
+        cnew_path = cnew_path.replace(
             "Here is some old content that needs updating.",
-            "Here is the fresh, updated content."
+            "Here is the fresh, updated content.",
         )
 
         # Merge
-        result = tool.merge(edited_subset, subset, superset, original_html)
+        result = tool.merge(cnew_path, subset, superset, original_html)
 
         # Verify changes
         assert "New Article Title" in result
@@ -152,12 +154,9 @@ class TestIntegration:
         superset, subset = tool.extract(original_html)
 
         # Only translate the first paragraph
-        edited_subset = subset.replace(
-            "This will be translated.",
-            "Esto será traducido."
-        )
+        cnew_path = subset.replace("This will be translated.", "Esto será traducido.")
 
-        result = tool.merge(edited_subset, subset, superset, original_html)
+        result = tool.merge(cnew_path, subset, superset, original_html)
 
         # Verify partial translation
         assert "Esto será traducido." in result
@@ -166,11 +165,7 @@ class TestIntegration:
 
     def test_workflow_with_custom_config(self):
         """Test workflow with custom configuration."""
-        config = ProcessingConfig(
-            id_prefix="trans_",
-            similarity_threshold=0.8,
-            performance_profile="accurate"
-        )
+        config = ProcessingConfig(id_prefix="trans_", simi_level=0.8, perf="accurate")
 
         tool = HTMLExtractMergeTool(config=config)
 
@@ -184,8 +179,8 @@ class TestIntegration:
         """
 
         superset, subset = tool.extract(html)
-        edited_subset = subset.replace("Test Title", "Updated Title")
-        result = tool.merge(edited_subset, subset, superset, html)
+        cnew_path = subset.replace("Test Title", "Updated Title")
+        result = tool.merge(cnew_path, subset, superset, html)
 
         assert "Updated Title" in result
         # Should use custom prefix (visible in superset)
@@ -207,8 +202,8 @@ class TestIntegration:
 
         # Should handle malformed HTML gracefully
         superset, subset = tool.extract(malformed_html)
-        edited_subset = subset.replace("Title", "New Title")
-        result = tool.merge(edited_subset, subset, superset, malformed_html)
+        cnew_path = subset.replace("Title", "New Title")
+        result = tool.merge(cnew_path, subset, superset, malformed_html)
 
         assert "New Title" in result
 
@@ -219,10 +214,10 @@ class TestIntegration:
         for i in range(20):
             sections.append(f"""
             <section>
-                <h2>Section {i+1}</h2>
-                <p>This is paragraph 1 in section {i+1}.</p>
-                <p>This is paragraph 2 in section {i+1}.</p>
-                <p>This is paragraph 3 in section {i+1}.</p>
+                <h2>Section {i + 1}</h2>
+                <p>This is paragraph 1 in section {i + 1}.</p>
+                <p>This is paragraph 2 in section {i + 1}.</p>
+                <p>This is paragraph 3 in section {i + 1}.</p>
             </section>
             """)
 
@@ -230,7 +225,7 @@ class TestIntegration:
         <html>
             <body>
                 <h1>Large Document</h1>
-                {''.join(sections)}
+                {"".join(sections)}
             </body>
         </html>
         """
@@ -241,9 +236,9 @@ class TestIntegration:
         superset, subset = tool.extract(large_html)
 
         # Edit some content
-        edited_subset = subset.replace("Large Document", "Documento Grande")
+        cnew_path = subset.replace("Large Document", "Documento Grande")
 
-        result = tool.merge(edited_subset, subset, superset, large_html)
+        result = tool.merge(cnew_path, subset, superset, large_html)
 
         assert "Documento Grande" in result
         assert result.count("<section>") == 20  # All sections preserved

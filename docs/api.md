@@ -19,10 +19,10 @@ Main interface for extraction and merging operations.
 Configuration for processing behavior.
 
 **Parameters:**
-- `id_prefix: str`: Generated ID prefix (default: "auto_")
-- `similarity_threshold: float`: Minimum similarity for fuzzy matching (default: 0.7)
-- `enable_llm_resolution: bool`: Enable LLM conflict resolution (default: False)
-- `performance_profile: str`: Processing profile - fast|balanced|accurate (default: "balanced")
+- `id_prefix: str`: Generated ID prefix (default: "xhq")
+- `simi_level: float`: Minimum similarity for fuzzy matching (default: 0.7)
+- `llm_use: bool`: Enable LLM conflict resolution (default: False)
+- `perf: str`: Processing profile - fast|balanced|accurate (default: "balanced")
 
 ### `LLMReconciler`
 LLM-powered conflict resolution interface.

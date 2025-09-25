@@ -27,19 +27,17 @@ class ElementMatcher:
     with configurable similarity thresholds.
     """
 
-    def __init__(self, similarity_threshold: float = 0.7) -> None:
+    def __init__(self, simi_level: float = 0.7) -> None:
         """Initialize the element matcher.
 
         Args:
-            similarity_threshold: Minimum similarity score for fuzzy matching
+            simi_level: Minimum similarity score for fuzzy matching
         """
-        self.similarity_threshold = similarity_threshold
+        self.simi_level = simi_level
         self._content_cache: dict[str, str] = {}
 
     def match_elements(
-        self,
-        edited_elements: list[Tag],
-        original_elements: list[Tag]
+        self, edited_elements: list[Tag], original_elements: list[Tag]
     ) -> list[tuple[Tag | None, Tag | None, float]]:
         """Match edited elements with original elements.
 
@@ -52,33 +50,33 @@ class ElementMatcher:
             None values indicate unmatched elements
         """
         matches = []
-        used_original_indices = set()
+        used_old_pacompal_indices = set()
 
         for edited_elem in edited_elements:
             best_match = None
             best_score = 0.0
-            best_original_idx = -1
+            best_old_pacompal_idx = -1
 
             for idx, original_elem in enumerate(original_elements):
-                if idx in used_original_indices:
+                if idx in used_old_pacompal_indices:
                     continue
 
                 score = self._calculate_similarity(edited_elem, original_elem)
 
-                if score > best_score and score >= self.similarity_threshold:
+                if score > best_score and score >= self.simi_level:
                     best_match = original_elem
                     best_score = score
-                    best_original_idx = idx
+                    best_old_pacompal_idx = idx
 
             if best_match is not None:
                 matches.append((edited_elem, best_match, best_score))
-                used_original_indices.add(best_original_idx)
+                used_old_pacompal_indices.add(best_old_pacompal_idx)
             else:
                 matches.append((edited_elem, None, 0.0))
 
         # Add unmatched original elements
         for idx, original_elem in enumerate(original_elements):
-            if idx not in used_original_indices:
+            if idx not in used_old_pacompal_indices:
                 matches.append((None, original_elem, 0.0))
 
         return matches
@@ -111,10 +109,7 @@ class ElementMatcher:
 
         # Combine scores with weights
         combined_score = (
-            id_score * 0.4 +
-            hash_score * 0.3 +
-            text_score * 0.2 +
-            structure_score * 0.1
+            id_score * 0.4 + hash_score * 0.3 + text_score * 0.2 + structure_score * 0.1
         )
 
         return combined_score
@@ -129,8 +124,8 @@ class ElementMatcher:
         Returns:
             1.0 if IDs match exactly, 0.0 otherwise
         """
-        id1 = elem1.get('id')
-        id2 = elem2.get('id')
+        id1 = elem1.get("id")
+        id2 = elem2.get("id")
 
         if id1 and id2 and id1 == id2:
             return 1.0
@@ -221,8 +216,8 @@ class ElementMatcher:
             return 0.0
 
         # Compare attributes (excluding generated IDs)
-        attrs1 = {k: v for k, v in elem1.attrs.items() if not k.startswith('id')}
-        attrs2 = {k: v for k, v in elem2.attrs.items() if not k.startswith('id')}
+        attrs1 = {k: v for k, v in elem1.attrs.items() if not k.startswith("id")}
+        attrs2 = {k: v for k, v in elem2.attrs.items() if not k.startswith("id")}
 
         if attrs1 == attrs2:
             return 1.0
@@ -271,13 +266,13 @@ class ElementMatcher:
         Returns:
             Normalized text content
         """
-        if hasattr(element, 'get_text'):
-            text = element.get_text(separator=' ', strip=True)
+        if hasattr(element, "get_text"):
+            text = element.get_text(separator=" ", strip=True)
         else:
             text = str(element).strip()
 
         # Normalize whitespace
-        return ' '.join(text.split())
+        return " ".join(text.split())
 
     def clear_cache(self) -> None:
         """Clear the content cache."""

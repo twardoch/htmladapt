@@ -27,7 +27,9 @@ class HTMLExtractMergeTool:
     def __init__(
         self,
         config: ProcessingConfig | None = None,
-        llm_reconciler: Optional["ReconcilerProtocol"] = None  # Optional LLM integration
+        llm_reconciler: Optional[
+            "ReconcilerProtocol"
+        ] = None,  # Optional LLM integration
     ) -> None:
         """Initialize the HTMLExtractMergeTool.
 
@@ -41,9 +43,11 @@ class HTMLExtractMergeTool:
         # Initialize components
         self.parser = HTMLParser(self.config.parser_preference)
         self.id_generator = IDGenerator(self.config.id_prefix)
-        self.element_matcher = ElementMatcher(self.config.similarity_threshold)
+        self.element_matcher = ElementMatcher(self.config.simi_level)
 
-        logger.info(f"Initialized HTMLExtractMergeTool with profile: {self.config.performance_profile}")
+        logger.info(
+            f"Initialized HTMLExtractMergeTool with profile: {self.config.perf}"
+        )
 
     def extract(self, html: str) -> tuple[str, str]:
         """Extract content from HTML document.
@@ -55,7 +59,7 @@ class HTMLExtractMergeTool:
             html: Original HTML content
 
         Returns:
-            Tuple of (superset_html, subset_html)
+            Tuple of (map_html, comp_html)
         """
         logger.info("Starting HTML extraction process")
 
@@ -67,34 +71,32 @@ class HTMLExtractMergeTool:
             self._register_existing_ids(original_soup)
 
             # Create superset: original HTML with added IDs
-            superset_soup = self._create_superset(original_soup)
+            full_soup = self._create_superset(original_soup)
 
             # Create subset: translatable content only
-            subset_soup = self._create_subset(superset_soup)
+            comp_soup = self._create_subset(full_soup)
 
-            superset_html = str(superset_soup)
-            subset_html = str(subset_soup)
+            map_html = str(full_soup)
+            comp_html = str(comp_soup)
 
-            logger.info(f"Extraction complete. Superset: {len(superset_html)} chars, Subset: {len(subset_html)} chars")
+            logger.info(
+                f"Extraction complete. Superset: {len(map_html)} chars, Subset: {len(comp_html)} chars"
+            )
 
-            return superset_html, subset_html
+            return map_html, comp_html
 
         except ValueError as error:
             logger.error("Extraction failed: %s", error)
             raise
 
     def merge(
-        self,
-        edited_subset: str,
-        original_subset: str,
-        superset: str,
-        original: str
+        self, cnew_path: str, cold_path: str, superset: str, original: str
     ) -> str:
         """Merge edited content back into the original structure.
 
         Args:
-            edited_subset: Edited subset content
-            original_subset: Original subset for comparison
+            cnew_path: Edited subset content
+            cold_path: Original subset for comparison
             superset: Original with IDs (superset document)
             original: Original HTML document
 
@@ -105,17 +107,17 @@ class HTMLExtractMergeTool:
 
         try:
             # Parse all inputs
-            edited_soup = self.parser.parse(edited_subset)
-            original_subset_soup = self.parser.parse(original_subset)
-            superset_soup = self.parser.parse(superset)
+            edited_soup = self.parser.parse(cnew_path)
+            original_comp_soup = self.parser.parse(cold_path)
+            full_soup = self.parser.parse(superset)
             original_soup = self.parser.parse(original)
 
             # Match elements between edited and original subsets
-            matches = self._match_subset_elements(edited_soup, original_subset_soup)
+            matches = self._match_comp_elements(edited_soup, original_comp_soup)
             matches = self._apply_llm_resolution(matches)
 
             # Apply changes to superset
-            merged_soup = self._apply_changes_to_superset(matches, superset_soup)
+            merged_soup = self._apply_changes_to_superset(matches, full_soup)
 
             # Clean up generated IDs (optional, based on config)
             final_soup = self._cleanup_generated_ids(merged_soup)
@@ -137,7 +139,7 @@ class HTMLExtractMergeTool:
             soup: Parsed HTML document
         """
         for element in soup.find_all(attrs={"id": True}):
-            self.id_generator.register_existing_id(element['id'])
+            self.id_generator.register_existing_id(element["id"])
 
     def _create_superset(self, soup: BeautifulSoup) -> BeautifulSoup:
         """Create superset document by adding IDs to text-containing elements.
@@ -149,36 +151,38 @@ class HTMLExtractMergeTool:
             Superset document with IDs
         """
         # Make a copy to avoid modifying the original
-        superset_soup = self.parser.clone_soup(soup)
+        full_soup = self.parser.clone_soup(soup)
 
-        for element in superset_soup.find_all():
+        for element in full_soup.find_all():
             if self._is_text_containing_element(element):
-                if not element.get('id'):
-                    element['id'] = self.id_generator.generate_id(element.name)
+                if not element.get("id"):
+                    element["id"] = self.id_generator.generate_id(element.name)
 
-        return superset_soup
+        return full_soup
 
-    def _create_subset(self, superset_soup: BeautifulSoup) -> BeautifulSoup:
+    def _create_subset(self, full_soup: BeautifulSoup) -> BeautifulSoup:
         """Create subset document with only translatable content.
 
         Args:
-            superset_soup: Superset document with IDs
+            full_soup: Superset document with IDs
 
         Returns:
             Subset document with translatable content
         """
         # Start with minimal HTML structure
-        parser_name = getattr(superset_soup, '_htmladapt_parser', self.parser.default_parser)
-        subset_soup = BeautifulSoup('<html><body></body></html>', parser_name)
-        setattr(subset_soup, '_htmladapt_parser', parser_name)
-        body = subset_soup.body
+        parser_name = getattr(
+            full_soup, "_htmladapt_parser", self.parser.default_parser
+        )
+        comp_soup = BeautifulSoup("<html><body></body></html>", parser_name)
+        setattr(comp_soup, "_htmladapt_parser", parser_name)
+        body = comp_soup.body
 
-        for element in superset_soup.find_all():
+        for element in full_soup.find_all():
             if self._is_translatable_element(element):
                 # Create a copy of the element with its ID
-                new_elem = subset_soup.new_tag(element.name)
-                if element.get('id'):
-                    new_elem['id'] = element['id']
+                new_elem = comp_soup.n_tag(element.name)
+                if element.get("id"):
+                    new_elem["id"] = element["id"]
 
                 # Add text content
                 text_content = self._extract_text_content(element)
@@ -187,7 +191,7 @@ class HTMLExtractMergeTool:
 
                 body.append(new_elem)
 
-        return subset_soup
+        return comp_soup
 
     def _is_text_containing_element(self, element: Tag) -> bool:
         """Check if element contains translatable text.
@@ -202,13 +206,13 @@ class HTMLExtractMergeTool:
             return False
 
         # Skip script, style, and other non-translatable elements
-        if element.name in ['script', 'style', 'meta', 'link', 'head', 'title']:
+        if element.name in ["script", "style", "meta", "link", "head", "title"]:
             return False
 
         # Check if element has direct text content (not just child element text)
         direct_text = ""
         for content in element.contents:
-            if hasattr(content, 'strip') and callable(getattr(content, 'strip', None)):
+            if hasattr(content, "strip") and callable(getattr(content, "strip", None)):
                 text = content.strip()
                 if text:
                     direct_text += text
@@ -235,72 +239,80 @@ class HTMLExtractMergeTool:
         Returns:
             Direct text content
         """
-        if hasattr(element, 'get_text'):
+        if hasattr(element, "get_text"):
             # Get text from immediate children only, not nested elements
             texts = []
             for content in element.contents:
-                if hasattr(content, 'strip') and callable(getattr(content, 'strip', None)):  # NavigableString
+                if hasattr(content, "strip") and callable(
+                    getattr(content, "strip", None)
+                ):  # NavigableString
                     text = content.strip()
                     if text:
                         texts.append(text)
-                elif hasattr(content, 'get_text'):  # Tag
-                    text = content.get_text(separator=' ', strip=True)
+                elif hasattr(content, "get_text"):  # Tag
+                    text = content.get_text(separator=" ", strip=True)
                     if text:
                         texts.append(text)
-            return ' '.join(texts)
+            return " ".join(texts)
         return str(element).strip()
 
-    def _match_subset_elements(
-        self,
-        edited_soup: BeautifulSoup,
-        original_subset_soup: BeautifulSoup
+    def _match_comp_elements(
+        self, edited_soup: BeautifulSoup, original_comp_soup: BeautifulSoup
     ) -> list:
         """Match elements between edited and original subset documents.
 
         Args:
             edited_soup: Edited subset document
-            original_subset_soup: Original subset document
+            original_comp_soup: Original subset document
 
         Returns:
             List of element matches
         """
         edited_elements = list(edited_soup.find_all())
-        original_elements = list(original_subset_soup.find_all())
+        original_elements = list(original_comp_soup.find_all())
 
         return self.element_matcher.match_elements(edited_elements, original_elements)
 
     def _apply_llm_resolution(self, matches: list) -> list:
         """Use the LLM reconciler to strengthen low-confidence matches."""
-        if not self.config.enable_llm_resolution or not self.llm_reconciler:
+        if not self.config.llm_use or not self.llm_reconciler:
             return matches
 
         try:
-            if hasattr(self.llm_reconciler, "is_available") and not self.llm_reconciler.is_available():
+            if (
+                hasattr(self.llm_reconciler, "is_available")
+                and not self.llm_reconciler.is_available()
+            ):
                 return matches
         except Exception as error:  # pragma: no cover - defensive guard
             logger.debug("LLM availability check failed: %s", error)
             return matches
 
         unmatched_edits: list[tuple[int, Tag]] = []
-        unmatched_originals: list[tuple[int, Tag]] = []
+        unmatched_old_pacompals: list[tuple[int, Tag]] = []
 
         for index, (edited_elem, original_elem, confidence) in enumerate(matches):
             if edited_elem is not None and original_elem is None:
                 unmatched_edits.append((index, edited_elem))
             elif edited_elem is None and original_elem is not None:
-                unmatched_originals.append((index, original_elem))
+                unmatched_old_pacompals.append((index, original_elem))
 
-        if not unmatched_edits or not unmatched_originals:
+        if not unmatched_edits or not unmatched_old_pacompals:
             return matches
 
-        remaining_candidates = unmatched_originals.copy()
+        remaining_candidates = unmatched_old_pacompals.copy()
 
         for match_index, edited_elem in unmatched_edits:
             edited_text = self._extract_text_content(edited_elem)
-            candidate_texts = [self._extract_text_content(candidate) for _, candidate in remaining_candidates]
+            candidate_texts = [
+                self._extract_text_content(candidate)
+                for _, candidate in remaining_candidates
+            ]
 
             try:
-                resolution = self.llm_reconciler.resolve_conflict(edited_text, candidate_texts, context=None)
+                resolution = self.llm_reconciler.resolve_conflict(
+                    edited_text, candidate_texts, context=None
+                )
             except Exception as error:  # pragma: no cover - external dependency guard
                 logger.debug("LLM resolution failed: %s", error)
                 continue
@@ -308,7 +320,7 @@ class HTMLExtractMergeTool:
             best_index = resolution.get("best_match_index")
             confidence = float(resolution.get("confidence", 0.0))
 
-            if best_index is None or confidence < self.config.similarity_threshold:
+            if best_index is None or confidence < self.config.simi_level:
                 continue
 
             if not (0 <= best_index < len(remaining_candidates)):
@@ -318,23 +330,21 @@ class HTMLExtractMergeTool:
             matches[match_index] = (edited_elem, original_elem, confidence)
 
             # Remove the now-claimed original slot from the master list as well.
-            for i, (candidate_idx, _) in enumerate(unmatched_originals):
+            for i, (candidate_idx, _) in enumerate(unmatched_old_pacompals):
                 if candidate_idx == original_idx:
-                    unmatched_originals.pop(i)
+                    unmatched_old_pacompals.pop(i)
                     break
 
         return matches
 
     def _apply_changes_to_superset(
-        self,
-        matches: list,
-        superset_soup: BeautifulSoup
+        self, matches: list, full_soup: BeautifulSoup
     ) -> BeautifulSoup:
         """Apply matched changes to the superset document.
 
         Args:
             matches: Element matches from subset comparison
-            superset_soup: Superset document to modify
+            full_soup: Superset document to modify
 
         Returns:
             Modified superset document
@@ -343,21 +353,21 @@ class HTMLExtractMergeTool:
 
         for edited_elem, original_elem, confidence in matches:
             lookup_id = None
-            if original_elem and original_elem.get('id'):
-                lookup_id = original_elem['id']
-            elif edited_elem and edited_elem.get('id'):
-                lookup_id = edited_elem['id']
+            if original_elem and original_elem.get("id"):
+                lookup_id = original_elem["id"]
+            elif edited_elem and edited_elem.get("id"):
+                lookup_id = edited_elem["id"]
 
             if lookup_id:
                 match_by_id[lookup_id] = (edited_elem, original_elem, confidence)
 
         for edited_elem, original_elem, confidence in matches:
-            if edited_elem and original_elem and confidence >= self.config.similarity_threshold:
+            if edited_elem and original_elem and confidence >= self.config.simi_level:
                 # Find corresponding element in superset by ID
-                element_id = original_elem.get('id')
+                element_id = original_elem.get("id")
                 if element_id:
-                    superset_elem = superset_soup.find(attrs={'id': element_id})
-                    if superset_elem:
+                    full_elem = full_soup.find(attrs={"id": element_id})
+                    if full_elem:
                         # Update text content while preserving structure and attributes
                         new_text = self._extract_text_content(edited_elem)
 
@@ -365,20 +375,29 @@ class HTMLExtractMergeTool:
                         # Replace only the text content, not the entire element
                         if new_text:
                             # Remove child elements that were dropped or whose text is no longer referenced.
-                            if isinstance(superset_elem, Tag):
-                                for child in list(superset_elem.find_all(recursive=False)):
-                                    if isinstance(child, Tag) and child.get('id'):
-                                        child_id = child['id']
+                            if isinstance(full_elem, Tag):
+                                for child in list(full_elem.find_all(recursive=False)):
+                                    if isinstance(child, Tag) and child.get("id"):
+                                        child_id = child["id"]
                                         child_match = match_by_id.get(child_id)
-                                        child_original_text = self._extract_text_content(child)
-                                        child_text_lower = child_original_text.lower() if child_original_text else ""
+                                        child_old_pacompal_text = (
+                                            self._extract_text_content(child)
+                                        )
+                                        child_text_lower = (
+                                            child_old_pacompal_text.lower()
+                                            if child_old_pacompal_text
+                                            else ""
+                                        )
 
-                                        edited_child = child_match[0] if child_match else None
+                                        edited_child = (
+                                            child_match[0] if child_match else None
+                                        )
 
                                         child_removed_in_subset = edited_child is None
                                         child_changed = (
                                             edited_child is not None
-                                            and self._extract_text_content(edited_child) != child_original_text
+                                            and self._extract_text_content(edited_child)
+                                            != child_old_pacompal_text
                                         )
 
                                         # Drop unchanged children whose original text is absent from the new parent text.
@@ -386,22 +405,28 @@ class HTMLExtractMergeTool:
                                             child.decompose()
                                             continue
 
-                                        if not child_changed and child_text_lower and child_text_lower not in new_text.lower():
+                                        if (
+                                            not child_changed
+                                            and child_text_lower
+                                            and child_text_lower not in new_text.lower()
+                                        ):
                                             child.decompose()
                                             continue
 
                             # Clear only text content, keep child elements
-                            for content in list(superset_elem.contents):
-                                if hasattr(content, 'strip') and callable(getattr(content, 'strip', None)):  # It's a NavigableString
+                            for content in list(full_elem.contents):
+                                if hasattr(content, "strip") and callable(
+                                    getattr(content, "strip", None)
+                                ):  # It's a NavigableString
                                     content.extract()
 
                             # Add new text at the beginning
-                            if superset_elem.contents:
-                                superset_elem.insert(0, new_text)
+                            if full_elem.contents:
+                                full_elem.insert(0, new_text)
                             else:
-                                superset_elem.string = new_text
+                                full_elem.string = new_text
 
-        return superset_soup
+        return full_soup
 
     def _cleanup_generated_ids(self, soup: BeautifulSoup) -> BeautifulSoup:
         """Remove generated IDs from the final document.
@@ -412,9 +437,9 @@ class HTMLExtractMergeTool:
         Returns:
             Document with generated IDs removed
         """
-        for element in soup.find_all(attrs={'id': True}):
-            if self.id_generator.is_generated_id(element['id']):
-                del element['id']
+        for element in soup.find_all(attrs={"id": True}):
+            if self.id_generator.is_generated_id(element["id"]):
+                del element["id"]
 
         return soup
 
@@ -437,8 +462,8 @@ class HTMLExtractMergeTool:
             Dictionary with processing statistics
         """
         return {
-            "config_profile": self.config.performance_profile,
+            "config_profile": self.config.perf,
             "available_parsers": self.parser.available_parsers,
             "id_generator_stats": self.id_generator.stats,
-            "similarity_threshold": self.config.similarity_threshold,
+            "simi_level": self.config.simi_level,
         }

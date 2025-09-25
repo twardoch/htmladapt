@@ -17,8 +17,8 @@ class TestIDGenerator:
         id1 = self.generator.generate_id()
         id2 = self.generator.generate_id()
 
-        assert id1.startswith("auto_")
-        assert id2.startswith("auto_")
+        assert id1.startswith("xhq")
+        assert id2.startswith("xhq")
         assert id1 != id2
 
     def test_custom_prefix(self):

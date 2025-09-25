@@ -14,10 +14,10 @@ class ProcessingConfig:
 
     Attributes:
         id_prefix: Prefix for generated element IDs
-        similarity_threshold: Minimum similarity score for fuzzy matching (0.0-1.0)
-        enable_llm_resolution: Whether to use LLM for conflict resolution
-        llm_model: LLM model name for conflict resolution
-        performance_profile: Processing profile affecting speed vs accuracy
+        simi_level: Minimum similarity score for fuzzy matching (0.0-1.0)
+        llm_use: Whether to use LLM for conflict resolution
+        model_llm: LLM model name for conflict resolution
+        perf: Processing profile affecting speed vs accuracy
         max_context_tokens: Maximum tokens per LLM request
         parser_preference: Preferred HTML parser backend order
         max_depth_limit: Maximum nesting depth for processing
@@ -25,18 +25,18 @@ class ProcessingConfig:
     """
 
     # ID generation settings
-    id_prefix: str = "auto_"
+    id_prefix: str = "xhq"
 
     # Matching algorithm settings
-    similarity_threshold: float = 0.7
+    simi_level: float = 0.7
 
     # LLM integration settings
-    enable_llm_resolution: bool = False
-    llm_model: str = "gpt-4o-mini"
+    llm_use: bool = False
+    model_llm: str = "gpt-4o-mini"
     max_context_tokens: int = 1000
 
     # Performance settings
-    performance_profile: Literal["fast", "balanced", "accurate"] = "balanced"
+    perf: Literal["fast", "balanced", "accurate"] = "balanced"
     parser_preference: list[str] = None
     max_depth_limit: int = 100
     memory_limit_mb: int = 512
@@ -47,8 +47,8 @@ class ProcessingConfig:
             self.parser_preference = ["lxml", "html5lib", "html.parser"]
 
         # Validate threshold
-        if not 0.0 <= self.similarity_threshold <= 1.0:
-            raise ValueError("similarity_threshold must be between 0.0 and 1.0")
+        if not 0.0 <= self.simi_level <= 1.0:
+            raise ValueError("simi_level must be between 0.0 and 1.0")
 
         # Validate max_context_tokens
         if self.max_context_tokens < 100:
@@ -66,9 +66,9 @@ class ProcessingConfig:
             ProcessingConfig: Configuration with fast processing settings
         """
         defaults = {
-            "performance_profile": "fast",
-            "similarity_threshold": 0.8,
-            "enable_llm_resolution": False,
+            "perf": "fast",
+            "simi_level": 0.8,
+            "llm_use": False,
             "parser_preference": ["lxml", "html.parser"],
         }
         defaults.update(kwargs)
@@ -82,9 +82,9 @@ class ProcessingConfig:
             ProcessingConfig: Configuration with accurate processing settings
         """
         defaults = {
-            "performance_profile": "accurate",
-            "similarity_threshold": 0.6,
-            "enable_llm_resolution": True,
+            "perf": "accurate",
+            "simi_level": 0.6,
+            "llm_use": True,
             "parser_preference": ["html5lib", "lxml", "html.parser"],
         }
         defaults.update(kwargs)
@@ -98,9 +98,9 @@ class ProcessingConfig:
             ProcessingConfig: Configuration with balanced processing settings
         """
         defaults = {
-            "performance_profile": "balanced",
-            "similarity_threshold": 0.7,
-            "enable_llm_resolution": False,
+            "perf": "balanced",
+            "simi_level": 0.7,
+            "llm_use": False,
             "parser_preference": ["lxml", "html5lib", "html.parser"],
         }
         defaults.update(kwargs)

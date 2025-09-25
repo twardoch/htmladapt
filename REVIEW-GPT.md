@@ -14,7 +14,7 @@
      assert "<strong>Inner" not in merged  # currently fails
      ```
    - Impact: Sentences with inline formatting (links, emphasis, spans) retain original inner text, breaking translation workflows.  
-   - Fix: Replace the target element entirely (`superset_elem.clear(); superset_elem.append(...)`) or traverse both trees to update descendant text nodes according to subset edits.
+   - Fix: Replace the target element entirely (`full_elem.clear(); full_elem.append(...)`) or traverse both trees to update descendant text nodes according to subset edits.
 
 2. **Parser preference ignored when rebuilding soups**  
    - Location: `src/htmladapt/core/extractor_merger.py:147-148` and `src/htmladapt/core/extractor_merger.py:163-170`  
@@ -23,8 +23,8 @@
 
 3. **LLM reconciliation path is unused**  
    - Location: `src/htmladapt/core/extractor_merger.py:24-41` (initialization) with no further references  
-   - `HTMLExtractMergeTool` accepts `llm_reconciler` and exposes `ProcessingConfig.enable_llm_resolution`, but the merge pipeline never calls `self.llm_reconciler`. The AI conflict-resolution feature is dead code.  
-   - Fix: When `enable_llm_resolution` is true and matcher confidence is low, pass candidate texts to `LLMReconciler.resolve_conflict` and apply its output. Add tests that toggle the config and verify reconciler invocation.
+   - `HTMLExtractMergeTool` accepts `llm_reconciler` and exposes `ProcessingConfig.llm_use`, but the merge pipeline never calls `self.llm_reconciler`. The AI conflict-resolution feature is dead code.  
+   - Fix: When `llm_use` is true and matcher confidence is low, pass candidate texts to `LLMReconciler.resolve_conflict` and apply its output. Add tests that toggle the config and verify reconciler invocation.
 
 ## Additional Recommendations
 

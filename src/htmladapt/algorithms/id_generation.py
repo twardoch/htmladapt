@@ -14,7 +14,7 @@ class IDGenerator:
     for traceability and collision detection.
     """
 
-    def __init__(self, prefix: str = "auto_") -> None:
+    def __init__(self, prefix: str = "xhq") -> None:
         """Initialize the ID generator.
 
         Args:

@@ -19,7 +19,7 @@ Deliver small, high-impact fixes that improve merge correctness and respect user
 
 3. **Enable LLM reconciliation path when requested**
    - Introduce a minimal interface/type hint for reconcilers.
-   - Update the merge pipeline to call the reconciler when similarity scores fall below the acceptance threshold and `enable_llm_resolution` is true.
+   - Update the merge pipeline to call the reconciler when similarity scores fall below the acceptance threshold and `llm_use` is true.
    - Extend tests with a stub reconciler to confirm the hook executes and its result influences matching.
 
 4. **Tighten supporting ergonomics** (only as needed for work above)

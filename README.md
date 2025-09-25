@@ -27,7 +27,7 @@ Transforms the original HTML into two representations:
 from htmladapt import HTMLExtractMergeTool
 
 tool = HTMLExtractMergeTool()
-superset_html, subset_html = tool.extract(original_html)
+map_html, comp_html = tool.extract(original_html)
 ```
 
 ### 2. Merge Phase
@@ -35,9 +35,9 @@ Recombines edited content with original structure using reconciliation algorithm
 
 ```python
 final_html = tool.merge(
-    edited_subset_html,
-    original_subset_html,
-    superset_html,
+    edited_comp_html,
+    original_comp_html,
+    map_html,
     original_html
 )
 ```
@@ -91,16 +91,16 @@ tool = HTMLExtractMergeTool(id_prefix="trans_")
 
 # Step 1: Extract content
 original_html = open('document.html', 'r').read()
-superset_html, subset_html = tool.extract(original_html)
+map_html, comp_html = tool.extract(original_html)
 
 # Step 2: Edit the subset
-edited_subset = subset_html.replace('Hello', 'Hola').replace('World', 'Mundo')
+cnew_path = comp_html.replace('Hello', 'Hola').replace('World', 'Mundo')
 
 # Step 3: Merge back
 final_html = tool.merge(
-    edited_subset,      # Edited content
-    subset_html,        # Original subset for comparison
-    superset_html,      # Enhanced original with IDs
+    cnew_path,      # Edited content
+    comp_html,        # Original subset for comparison
+    map_html,      # Enhanced original with IDs
     original_html       # Original document
 )
 
@@ -117,10 +117,10 @@ from htmladapt import HTMLExtractMergeTool, ProcessingConfig
 # Custom configuration
 config = ProcessingConfig(
     id_prefix="my_prefix_",
-    similarity_threshold=0.8,
-    enable_llm_resolution=True,
-    llm_model="gpt-4o-mini",
-    performance_profile="accurate"  # fast|balanced|accurate
+    simi_level=0.8,
+    llm_use=True,
+    model_llm="gpt-4o-mini",
+    perf="accurate"  # fast|balanced|accurate
 )
 
 tool = HTMLExtractMergeTool(config=config)
@@ -141,7 +141,7 @@ llm = LLMReconciler(
 tool = HTMLExtractMergeTool(llm_reconciler=llm)
 
 # Automatic LLM use for ambiguous matches
-final_html = tool.merge(edited_subset, subset_html, superset_html, original_html)
+final_html = tool.merge(cnew_path, comp_html, map_html, original_html)
 ```
 
 ## Use Cases
@@ -273,10 +273,10 @@ Main interface for extraction and merging.
 Configuration object.
 
 **Parameters:**
-- `id_prefix: str`: ID prefix (default: "auto_")
-- `similarity_threshold: float`: Minimum similarity for fuzzy matching (default: 0.7)
-- `enable_llm_resolution: bool`: Use LLM for conflicts (default: False)
-- `performance_profile: str`: fast|balanced|accurate (default: "balanced")
+- `id_prefix: str`: ID prefix (default: "xhq")
+- `simi_level: float`: Minimum similarity for fuzzy matching (default: 0.7)
+- `llm_use: bool`: Use LLM for conflicts (default: False)
+- `perf: str`: fast|balanced|accurate (default: "balanced")
 
 #### `LLMReconciler`
 LLM conflict resolution interface.
@@ -345,22 +345,22 @@ from django.db import models
 
 class Document(models.Model):
     original_html = models.TextField()
-    superset_html = models.TextField()
-    subset_html = models.TextField()
+    map_html = models.TextField()
+    comp_html = models.TextField()
 
     def extract_content(self):
         from htmladapt import HTMLExtractMergeTool
         tool = HTMLExtractMergeTool()
-        self.superset_html, self.subset_html = tool.extract(self.original_html)
+        self.m_html, self.c_html = tool.extract(self.original_html)
         self.save()
 
-    def merge_content(self, edited_html):
+    def merge_content(self, cnew_html):
         from htmladapt import HTMLExtractMergeTool
         tool = HTMLExtractMergeTool()
         return tool.merge(
-            edited_html,
-            self.subset_html,
-            self.superset_html,
+            cnew_html,
+            self.c_html,
+            self.m_html,
             self.original_html
         )
 ```
@@ -378,13 +378,13 @@ tool = HTMLExtractMergeTool()
 def process_large_document(html_content, user_id):
     try:
         superset, subset = tool.extract(html_content)
-        return {'status': 'success', 'subset_id': store_subset(subset)}
+        return {'status': 'success', 'comp_id': store_subset(subset)}
     except Exception as e:
         return {'status': 'error', 'message': str(e)}
 
 @app.task
-def merge_edited_content(edited_html, subset_html, superset_html, original_html):
-    result = tool.merge(edited_html, subset_html, superset_html, original_html)
+def merge_edited_content(cnew_html, comp_html, map_html, original_html):
+    result = tool.merge(cnew_html, comp_html, map_html, original_html)
     return result
 ```
 

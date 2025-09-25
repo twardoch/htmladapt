@@ -32,41 +32,38 @@ class HTMLAdaptCLI:
 
     def extract(
         self,
-        input_file: str | Path,
-        superset_output: str | Path | None = None,
-        subset_output: str | Path | None = None,
-        id_prefix: str = "auto_",
-        performance_profile: str = "balanced"
+        full_path: str | Path,
+        map_path: str | Path | None = None,
+        comp_path: str | Path | None = None,
+        id_prefix: str = "xhq",
+        perf: str = "balanced",
     ) -> None:
-        """Extract content from HTML file into superset and subset documents.
+        """Extract content from HTML file into map_path and subset documents.
 
         Args:
-            input_file: Path to input HTML file
-            superset_output: Path for superset HTML output (optional)
-            subset_output: Path for subset HTML output (optional)
-            id_prefix: Prefix for generated IDs (default: "auto_")
-            performance_profile: Performance profile - fast|balanced|accurate (default: "balanced")
+            full_path: Path to old_path HTML file
+            map_path: Path for 'map_path' map HTML new_path (optional)
+            comp_path: Path for comp HTML new_path (optional)
+            id_prefix: Prefix for generated IDs (default: "xhq")
+            perf: Performance profile - fast|balanced|accurate (default: "balanced")
         """
-        input_path = Path(input_file)
+        full_path = Path(full_path)
 
-        if not input_path.exists():
-            self.console.print(f"[red]Error: Input file {input_path} not found[/red]")
+        if not full_path.exists():
+            self.console.print(f"[red]Error: Input file {full_path} not found[/red]")
             sys.exit(1)
 
-        # Set default output paths if not provided
-        if superset_output is None:
-            superset_output = input_path.with_suffix('.superset.html')
-        if subset_output is None:
-            subset_output = input_path.with_suffix('.subset.html')
+        # Set default new_path paths if not provided
+        if map_path is None:
+            map_path = full_path.with_suffix(".m.html")
+        if comp_path is None:
+            comp_path = full_path.with_suffix(".c.html")
 
-        superset_path = Path(superset_output)
-        subset_path = Path(subset_output)
+        map_path = Path(map_path)
+        comp_path = Path(comp_path)
 
         # Create configuration
-        config = ProcessingConfig(
-            id_prefix=id_prefix,
-            performance_profile=performance_profile
-        )
+        config = ProcessingConfig(id_prefix=id_prefix, perf=perf)
 
         # Initialize tool
         tool = HTMLExtractMergeTool(config=config)
@@ -74,22 +71,21 @@ class HTMLAdaptCLI:
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
-            console=self.console
+            console=self.console,
         ) as progress:
-
             # Read input file
             task = progress.add_task("Reading input file...", total=None)
             try:
-                html_content = input_path.read_text(encoding='utf-8')
+                html_content = full_path.read_text(encoding="utf-8")
                 progress.update(task, description="Processing HTML...")
 
                 # Extract content
-                superset_html, subset_html = tool.extract(html_content)
+                map_html, comp_html = tool.extract(html_content)
 
-                # Write output files
-                progress.update(task, description="Writing output files...")
-                superset_path.write_text(superset_html, encoding='utf-8')
-                subset_path.write_text(subset_html, encoding='utf-8')
+                # Write new_path files
+                progress.update(task, description="Writing new_path files...")
+                map_path.write_text(map_html, encoding="utf-8")
+                comp_path.write_text(comp_html, encoding="utf-8")
 
                 progress.update(task, description="Extraction complete!")
 
@@ -103,77 +99,82 @@ class HTMLAdaptCLI:
         table.add_column("Path")
         table.add_column("Size")
 
-        table.add_row("Original", str(input_path), f"{input_path.stat().st_size} bytes")
-        table.add_row("Superset", str(superset_path), f"{superset_path.stat().st_size} bytes")
-        table.add_row("Subset", str(subset_path), f"{subset_path.stat().st_size} bytes")
+        table.add_row("old", str(full_path), f"{full_path.stat().st_size} bytes")
+        table.add_row("map", str(map_path), f"{map_path.stat().st_size} bytes")
+        table.add_row("comp", str(comp_path), f"{comp_path.stat().st_size} bytes")
 
         self.console.print("\n[green]✅ Extraction completed successfully![/green]")
         self.console.print(table)
 
     def merge(
         self,
-        edited_subset: str | Path,
-        original_subset: str | Path,
-        superset: str | Path,
-        original: str | Path,
-        output: str | Path | None = None,
-        id_prefix: str = "auto_",
-        similarity_threshold: float = 0.7,
-        enable_llm: bool = False,
-        llm_model: str = "gpt-4o-mini",
-        performance_profile: str = "balanced"
+        cnew_path: str | Path,
+        Cold_path: str | Path,
+        map_path: str | Path,
+        old_path: str | Path,
+        new_path: str | Path | None = None,
+        id_prefix: str = "xhq",
+        simi_level: float = 0.7,
+        llm_use: bool = False,
+        model_llm: str = "gpt-4o-mini",
+        perf: str = "balanced",
     ) -> None:
-        """Merge edited content back into original HTML structure.
+        """Merge edited content back into old_path HTML structure.
 
         Args:
-            edited_subset: Path to edited subset HTML file
-            original_subset: Path to original subset HTML file
-            superset: Path to superset HTML file
-            original: Path to original HTML file
-            output: Path for merged output (optional)
-            id_prefix: Prefix for generated IDs (default: "auto_")
-            similarity_threshold: Minimum similarity for fuzzy matching (default: 0.7)
-            enable_llm: Use LLM for conflict resolution (default: False)
-            llm_model: LLM model name (default: "gpt-4o-mini")
-            performance_profile: Performance profile - fast|balanced|accurate (default: "balanced")
+            cnew_path: Path to edited subset HTML file
+            cold_path: Path to old_path subset HTML file
+            map_path: Path to map_path HTML file
+            old_path: Path to old_path HTML file
+            new_path: Path for merged new_path (optional)
+            id_prefix: Prefix for generated IDs (default: "xhq")
+            simi_level: Minimum similarity for fuzzy matching (default: 0.7)
+            llm_use: Use LLM for conflict resolution (default: False)
+            model_llm: LLM model name (default: "gpt-4o-mini")
+            perf: Performance profile - fast|balanced|accurate (default: "balanced")
         """
-        edited_path = Path(edited_subset)
-        original_subset_path = Path(original_subset)
-        superset_path = Path(superset)
-        original_path = Path(original)
+        cnew_path = Path(cnew_path)
+        cold_path = Path(Cold_path)
+        map_path = Path(map_path)
+        old_path = Path(old_path)
 
         # Check all input files exist
-        for path in [edited_path, original_subset_path, superset_path, original_path]:
+        for path in [cnew_path, cold_path, map_path, old_path]:
             if not path.exists():
                 self.console.print(f"[red]Error: Input file {path} not found[/red]")
                 sys.exit(1)
 
-        # Set default output path if not provided
-        if output is None:
-            output = original_path.with_suffix('.merged.html')
-        output_path = Path(output)
+        # Set default new_path path if not provided
+        if new_path is None:
+            new_path = old_path.with_suffix(".n.html")
+        new_path = Path(new_path)
 
         # Create configuration
         config = ProcessingConfig(
             id_prefix=id_prefix,
-            similarity_threshold=similarity_threshold,
-            enable_llm_resolution=enable_llm,
-            llm_model=llm_model,
-            performance_profile=performance_profile
+            simi_level=simi_level,
+            llm_use=llm_use,
+            model_llm=model_llm,
+            perf=perf,
         )
 
         # Initialize LLM reconciler if enabled
         llm_reconciler = None
-        if enable_llm:
+        if llm_use:
             try:
                 import os
-                api_key = os.environ.get('OPENAI_API_KEY')
+
+                api_key = os.environ.get("OPENAI_API_KEY")
                 if not api_key:
-                    self.console.print("[red]Error: OPENAI_API_KEY environment variable required for LLM resolution[/red]")
+                    self.console.print(
+                        "[red]Error: OPENAI_API_KEY environment variable required for LLM resolution[/red]"
+                    )
                     sys.exit(1)
-                llm_reconciler = LLMReconciler(api_key=api_key, model=llm_model)
+                llm_reconciler = LLMReconciler(api_key=api_key, model=model_llm)
             except ImportError:
-                self.console.print("[red]Error: OpenAI dependencies not installed. Use 'pip install htmladapt[llm]'[/red]")
+                self.console.print(
+                    "[red]Error: OpenAI dependencies not installed. Use 'pip install htmladapt[llm]'[/red]"
+                )
                 sys.exit(1)
 
         # Initialize tool
@@ -182,29 +183,23 @@ class HTMLAdaptCLI:
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
-            console=self.console
+            console=self.console,
         ) as progress:
-
             task = progress.add_task("Reading input files...", total=None)
             try:
                 # Read all input files
-                edited_html = edited_path.read_text(encoding='utf-8')
-                original_subset_html = original_subset_path.read_text(encoding='utf-8')
-                superset_html = superset_path.read_text(encoding='utf-8')
-                original_html = original_path.read_text(encoding='utf-8')
+                cnew_html = cnew_path.read_text(encoding="utf-8")
+                cold_html = cold_path.read_text(encoding="utf-8")
+                map_html = map_path.read_text(encoding="utf-8")
+                old_html = old_path.read_text(encoding="utf-8")
 
                 progress.update(task, description="Merging content...")
 
                 # Merge content
-                merged_html = tool.merge(
-                    edited_html,
-                    original_subset_html,
-                    superset_html,
-                    original_html
-                )
+                new_html = tool.merge(cnew_html, cold_html, map_html, old_html)
 
-                progress.update(task, description="Writing output file...")
-                output_path.write_text(merged_html, encoding='utf-8')
+                progress.update(task, description="Writing new_path file...")
+                new_path.write_text(new_html, encoding="utf-8")
 
                 progress.update(task, description="Merge complete!")
 
@@ -214,93 +209,8 @@ class HTMLAdaptCLI:
 
         # Display results
         self.console.print(f"\n[green]✅ Merge completed successfully![/green]")
-        self.console.print(f"Output written to: [cyan]{output_path}[/cyan]")
-        self.console.print(f"Output size: {output_path.stat().st_size} bytes")
-
-    def process(
-        self,
-        input_file: str | Path,
-        output_file: str | Path | None = None,
-        id_prefix: str = "auto_",
-        similarity_threshold: float = 0.7,
-        enable_llm: bool = False,
-        llm_model: str = "gpt-4o-mini",
-        performance_profile: str = "balanced",
-        keep_intermediates: bool = False
-    ) -> None:
-        """Full extract-edit-merge workflow with external editor.
-
-        Args:
-            input_file: Path to input HTML file
-            output_file: Path for final output (optional)
-            id_prefix: Prefix for generated IDs (default: "auto_")
-            similarity_threshold: Minimum similarity for fuzzy matching (default: 0.7)
-            enable_llm: Use LLM for conflict resolution (default: False)
-            llm_model: LLM model name (default: "gpt-4o-mini")
-            performance_profile: Performance profile - fast|balanced|accurate (default: "balanced")
-            keep_intermediates: Keep intermediate files after processing (default: False)
-        """
-        input_path = Path(input_file)
-
-        if not input_path.exists():
-            self.console.print(f"[red]Error: Input file {input_path} not found[/red]")
-            sys.exit(1)
-
-        # Set default output path if not provided
-        if output_file is None:
-            output_file = input_path.with_suffix('.processed.html')
-        output_path = Path(output_file)
-
-        # Create intermediate file paths
-        superset_path = input_path.with_suffix('.superset.html')
-        subset_path = input_path.with_suffix('.subset.html')
-
-        # Step 1: Extract
-        self.console.print("[bold blue]Step 1: Extracting content...[/bold blue]")
-        self.extract(
-            input_file=input_path,
-            superset_output=superset_path,
-            subset_output=subset_path,
-            id_prefix=id_prefix,
-            performance_profile=performance_profile
-        )
-
-        # Step 2: Prompt for editing
-        self.console.print(f"\n[bold yellow]Step 2: Edit the subset file:[/bold yellow]")
-        self.console.print(Panel(
-            f"Please edit the content in: {subset_path}\n\n"
-            "This file contains only the translatable/editable content.\n"
-            "Make your changes and save the file, then press Enter to continue...",
-            title="Manual Editing Required",
-            border_style="yellow"
-        ))
-        input("Press Enter when you've finished editing...")
-
-        # Step 3: Merge
-        self.console.print("\n[bold blue]Step 3: Merging edited content...[/bold blue]")
-        self.merge(
-            edited_subset=subset_path,
-            original_subset=subset_path,  # Note: using same file as both edited and original
-            superset=superset_path,
-            original=input_path,
-            output=output_path,
-            id_prefix=id_prefix,
-            similarity_threshold=similarity_threshold,
-            enable_llm=enable_llm,
-            llm_model=llm_model,
-            performance_profile=performance_profile
-        )
-
-        # Cleanup intermediate files if requested
-        if not keep_intermediates:
-            try:
-                superset_path.unlink()
-                subset_path.unlink()
-                self.console.print("[dim]Cleaned up intermediate files[/dim]")
-            except Exception as e:
-                self.console.print(f"[yellow]Warning: Could not clean up intermediate files: {e}[/yellow]")
-
-        self.console.print(f"\n[green]🎉 Process completed! Final output: {output_path}[/green]")
+        self.console.print(f"new_path written to: [cyan]{new_path}[/cyan]")
+        self.console.print(f"new_path size: {new_path.stat().st_size} bytes")
 
 
 def main() -> None:

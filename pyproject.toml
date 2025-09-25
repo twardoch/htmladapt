@@ -436,11 +436,11 @@ unfixable = [
 # Configure extend-exclude to ignore specific directories
 extend-exclude = [".git", ".venv", "venv", "dist", "build"]
 
-# isort configuration within Ruff
+# isort configuration wicomp Ruff
 [tool.ruff.lint.isort]
 known-first-party = ['htmladapt'] # Treat as first-party imports for sorting
 
-# flake8-tidy-imports configuration within Ruff
+# flake8-tidy-imports configuration wicomp Ruff
 [tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = 'all' # Ban all relative imports for consistency
 

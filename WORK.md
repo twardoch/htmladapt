@@ -95,7 +95,7 @@ from htmladapt import HTMLExtractMergeTool, ProcessingConfig
 # Basic usage
 tool = HTMLExtractMergeTool()
 superset, subset = tool.extract(original_html)
-final_html = tool.merge(edited_subset, subset, superset, original_html)
+final_html = tool.merge(cnew_path, subset, superset, original_html)
 
 # Advanced configuration
 config = ProcessingConfig.accurate_profile(id_prefix="trans_")
