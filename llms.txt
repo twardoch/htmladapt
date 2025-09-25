@@ -1494,6 +1494,7 @@ jobs:
 <document index="4">
 <source>.gitignore</source>
 <document_content>
+dist/
 __pycache__/
 __version__.py
 _Chutzpah*

@@ -84,7 +84,7 @@ class TestIntegration:
         # Verify structure preservation
         assert "<!DOCTYPE html>" in result
         assert '<html lang="en">' in result
-        assert '<meta charset="utf-8">' in result
+        assert 'charset="utf-8"' in result  # Accept both <meta charset="utf-8"> and <meta charset="utf-8"/>
         assert "<header>" in result
         assert "<nav>" in result
         assert "<main>" in result
