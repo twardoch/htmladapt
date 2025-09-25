@@ -2,7 +2,7 @@
 DIR="$(dirname "$0")"
 cd "$DIR"
 uvx hatch clean;
-fd -e py -x autoflake {};
+fd -e py -x autoflake -i {};
 fd -e py -x pyupgrade --py312-plus {};
 fd -e py -x ruff check --output-format=github --fix --unsafe-fixes {};
 fd -e py -x ruff format --respect-gitignore --target-version py312 {};

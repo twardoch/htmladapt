@@ -2,7 +2,8 @@
 """Tests for IDGenerator class."""
 
 import pytest
-from htmladapt.algorithms.id_generation import IDGenerator
+
+from htmladapt.id_generation import IDGenerator
 
 
 class TestIDGenerator:

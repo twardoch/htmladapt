@@ -2,8 +2,9 @@
 """Tests for HTMLExtractMergeTool class."""
 
 import pytest
-from htmladapt.core.extractor_merger import HTMLExtractMergeTool
-from htmladapt.core.config import ProcessingConfig
+
+from htmladapt.config import ProcessingConfig
+from htmladapt.tool import HTMLExtractMergeTool
 
 
 class TestHTMLExtractMergeTool:
@@ -144,29 +145,17 @@ class TestHTMLExtractMergeTool:
         except Exception as e:
             pytest.fail(f"Empty HTML handling failed: {e}")
 
-    def test_validation_functionality(self):
-        """Test HTML validation functionality."""
-        valid_html = "<html><body><p>Valid content</p></body></html>"
-        invalid_html = "<html><body><p>Unclosed tag"
-
-        is_valid, issues = self.tool.validate_html(valid_html)
-        assert len(issues) == 0 or all("warning" in issue.lower() for issue in issues)
-
-        is_invalid, invalid_issues = self.tool.validate_html(invalid_html)
-        assert len(invalid_issues) > 0
-
     def test_stats_functionality(self):
         """Test statistics functionality."""
         stats = self.tool.stats
 
         assert isinstance(stats, dict)
-        assert "config_profile" in stats
-        assert "available_parsers" in stats
         assert "simi_level" in stats
+        assert "id_generator_stats" in stats
 
     def test_custom_config(self):
         """Test tool with custom configuration."""
-        config = ProcessingConfig(id_prefix="custom_", simi_level=0.9, perf="accurate")
+        config = ProcessingConfig(id_prefix="custom_", simi_level=0.9)
 
         tool = HTMLExtractMergeTool(config=config)
         html = "<html><body><p>Test text</p></body></html>"
@@ -242,65 +231,5 @@ class TestHTMLExtractMergeTool:
 
         merged = self.tool.merge(cnew_path, subset, superset, original_html)
 
-        assert "Translated paragraph" in merged, (
-            "Translated text should appear in merged output"
-        )
-        assert "<strong>" not in merged, (
-            "Inline markup should be removed when translation drops it"
-        )
-
-    def test_merge_uses_llm_reconciler_for_unmatched_elements(self):
-        """Verify that the LLM reconciler resolves low-confidence matches when enabled."""
-
-        class StubReconciler:
-            def __init__(self):
-                self.calls: list[tuple[str, list[str]]] = []
-
-            def resolve_conflict(
-                self, edited_content, original_candidates, context=None
-            ):
-                self.calls.append((edited_content, original_candidates))
-                return {
-                    "best_match_index": 0,
-                    "confidence": 0.9,
-                    "reasoning": "stub",
-                }
-
-            def is_available(self) -> bool:
-                return True
-
-        config = ProcessingConfig(
-            llm_use=True,
-            simi_level=0.8,
-            parser_preference=["html.parser"],
-        )
-
-        tool = HTMLExtractMergeTool(config=config, llm_reconciler=StubReconciler())
-
-        original_html = """
-        <html>
-            <body>
-                <p>First paragraph.</p>
-                <p>Second paragraph.</p>
-            </body>
-        </html>
-        """
-
-        superset, subset = tool.extract(original_html)
-
-        from bs4 import BeautifulSoup
-
-        comp_soup = BeautifulSoup(subset, "html.parser")
-        edited_entries = comp_soup.find_all("p")
-        edited_entries[1].string = "Translated second paragraph."
-        if edited_entries[1].has_attr("id"):
-            del edited_entries[1]["id"]  # Simulate an ID lost during translation
-
-        cnew_path = str(comp_soup)
-
-        result = tool.merge(cnew_path, subset, superset, original_html)
-
-        assert "Translated second paragraph." in result
-        assert tool.llm_reconciler.calls, (
-            "LLM reconciler should be invoked for unmatched content"
-        )
+        assert "Translated paragraph" in merged, "Translated text should appear in merged output"
+        assert "<strong>" not in merged, "Inline markup should be removed when translation drops it"

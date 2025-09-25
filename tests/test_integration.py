@@ -2,6 +2,7 @@
 """Integration tests for HTMLAdapt end-to-end workflows."""
 
 import pytest
+
 from htmladapt import HTMLExtractMergeTool, ProcessingConfig
 
 
@@ -84,9 +85,7 @@ class TestIntegration:
         # Verify structure preservation
         assert "<!DOCTYPE html>" in result
         assert '<html lang="en">' in result
-        assert (
-            'charset="utf-8"' in result
-        )  # Accept both <meta charset="utf-8"> and <meta charset="utf-8"/>
+        assert 'charset="utf-8"' in result  # Accept both <meta charset="utf-8"> and <meta charset="utf-8"/>
         assert "<header>" in result
         assert "<nav>" in result
         assert "<main>" in result
@@ -165,7 +164,7 @@ class TestIntegration:
 
     def test_workflow_with_custom_config(self):
         """Test workflow with custom configuration."""
-        config = ProcessingConfig(id_prefix="trans_", simi_level=0.8, perf="accurate")
+        config = ProcessingConfig(id_prefix="trans_", simi_level=0.8)
 
         tool = HTMLExtractMergeTool(config=config)
 
@@ -288,8 +287,10 @@ class TestIntegration:
         # Key structural elements should be preserved
         assert "<!DOCTYPE html>" in result
         assert 'lang="en"' in result
-        assert "<style>" in result and "</style>" in result
-        assert "<script>" in result and "</script>" in result
+        assert "<style>" in result
+        assert "</style>" in result
+        assert "<script>" in result
+        assert "</script>" in result
         assert 'class="main-body"' in result
         assert 'data-version="1.0"' in result
         assert 'id="main-header"' in result

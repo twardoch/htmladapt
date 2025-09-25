@@ -18,24 +18,13 @@ Project Structure:
 │   └── 📄 201.txt
 ├── 📁 src
 │   └── 📁 htmladapt
-│       ├── 📁 algorithms
-│       │   ├── 📄 __init__.py
-│       │   ├── 📄 id_generation.py
-│       │   └── 📄 matcher.py
-│       ├── 📁 core
-│       │   ├── 📄 __init__.py
-│       │   ├── 📄 config.py
-│       │   ├── 📄 extractor_merger.py
-│       │   └── 📄 parser.py
-│       ├── 📁 llm
-│       │   ├── 📄 __init__.py
-│       │   └── 📄 reconciler.py
-│       ├── 📁 utils
-│       │   ├── 📄 __init__.py
-│       │   └── 📄 helpers.py
 │       ├── 📄 __init__.py
 │       ├── 📄 __main__.py
-│       └── 📄 htmladapt.py
+│       ├── 📄 config.py
+│       ├── 📄 id_generation.py
+│       ├── 📄 matcher.py
+│       ├── 📄 parser.py
+│       └── 📄 tool.py
 ├── 📁 tests
 │   ├── 📄 test_config.py
 │   ├── 📄 test_extractor_merger.py
@@ -56,8 +45,6 @@ Project Structure:
 ├── 📄 pyproject.toml
 ├── 📄 QWEN.md
 ├── 📄 README.md
-├── 📄 REVIEW-GEMI.md
-├── 📄 REVIEW-GPT.md
 ├── 📄 SPEC.md
 ├── 📄 TODO.md
 └── 📄 WORK.md
@@ -2514,38 +2501,123 @@ tasks</item><item><code inline="true">/work</code> - Enter continuous work mode 
 <document index="11">
 <source>PLAN.md</source>
 <document_content>
-# HTMLAdapt Improvement Plan
+# Refactoring and Simplification Plan
 
-the_file: PLAN.md
+This plan outlines the steps to refactor the `htmladapt` codebase to be leaner, flatter, and more focused on its core functionality.
 
-## Objective
-Deliver small, high-impact fixes that improve merge correctness and respect user configuration without adding new complexity.
+## 1. Core Objective
 
-## Priorities
+The primary goal of `htmladapt` is to provide a robust tool for extracting content from an HTML document into a separate file for editing (e.g., translation) and then merging the edited content back into the original HTML structure, preserving all formatting, styles, and scripts.
 
-1. **Fix inline formatting merge bug**
-   - Add a regression test that covers translations affecting inline elements (e.g., `<p>Text <strong>x</strong></p>`).
-   - Update `_apply_changes_to_superset` to replace descendant text safely so the translated content reaches nested tags.
-   - Verify existing tests and the new test pass.
+## 2. Simplification and Feature Removal
 
-2. **Honor configured parser preference**
-   - Add coverage proving that `ProcessingConfig.parser_preference` controls the builder used for superset/subset creation.
-   - Refactor `_create_superset` and `_create_subset` to reuse the parser actually selected during `parse`.
-   - Ensure malformed-html fallbacks still work after the change.
+To align with the "Simple Tool" philosophy, the following features and components will be removed or simplified. The focus is on removing "enterprise" features that are not essential for the core use case.
 
-3. **Enable LLM reconciliation path when requested**
-   - Introduce a minimal interface/type hint for reconcilers.
-   - Update the merge pipeline to call the reconciler when similarity scores fall below the acceptance threshold and `llm_use` is true.
-   - Extend tests with a stub reconciler to confirm the hook executes and its result influences matching.
+### 2.1. Remove LLM-based Reconciliation
+The `src/htmladapt/llm` module, including the `LLMReconciler`, will be removed.
+-   **Reasoning:** LLM-based reconciliation adds significant complexity (API keys, external dependencies, prompts) and is not part of the core deterministic functionality. The tool should focus on robust algorithmic matching. Fuzzy matching should be the fallback for non-perfect matches.
+-   **Action:**
+    -   Delete the `src/htmladapt/llm` directory.
+    -   Remove any related code in `extractor_merger.py` that calls the `LLMReconciler`.
+    -   Remove `llm_use` and `model_llm` from `ProcessingConfig` in `src/htmladapt/core/config.py`.
+    -   Remove LLM-related options from the CLI in `src/htmladapt/__main__.py`.
 
-4. **Tighten supporting ergonomics** (only as needed for work above)
-   - Replace broad `except Exception` logging with narrower error handling where failures are expected.
-   - Trim unused parsing (e.g., redundant `original_soup`) if it becomes dead code during refactors.
+### 2.2. Remove Utility Functions
+The `src/htmladapt/utils` directory and its contents will be removed.
+-   **Reasoning:** Functions like `validate_html`, `estimate_processing_time`, and `optimize_for_size` are auxiliary and add bloat. The library should assume valid HTML as input and not concern itself with pre-processing or performance estimation.
+-   **Action:**
+    -   Delete the `src/htmladapt/utils` directory.
+    -   Remove any imports and calls to these utility functions from other files (e.g., `htmladapt.py`, `extractor_merger.py`).
 
-## Done Definition
-- All new tests pass with `uvx hatch test`.
-- PLAN, TODO, WORK updated to reflect progress.
-- Changes remain small, readable, and keep the tool performant.
+### 2.3. Simplify Configuration
+The `ProcessingConfig` in `src/htmladapt/core/config.py` will be simplified.
+-   **Reasoning:** The `perf` profile ('fast', 'balanced', 'accurate') and its corresponding class methods are an unnecessary abstraction. The configuration should be minimal. The validation and memory/depth limits are also over-engineering for a simple tool.
+-   **Action:**
+    -   Remove the `perf`, `max_context_tokens`, `parser_preference`, `max_depth_limit`, and `memory_limit_mb` parameters from `ProcessingConfig`.
+    -   Remove the `fast_profile`, `accurate_profile`, and `balanced_profile` class methods.
+    -   Remove the `__post_init__` validation logic.
+    -   The simplified `ProcessingConfig` will only contain `id_prefix` and `simi_level`.
+    -   Consider moving these two parameters directly to the `HTMLExtractMergeTool` constructor and removing the `ProcessingConfig` class altogether.
+
+### 2.4. Simplify Parser
+The `HTMLParser` in `src/htmladapt/core/parser.py` will be simplified.
+- **Reasoning:** The `validate_html` method and parser availability checks are not core to the parsing functionality.
+- **Action:**
+    - Remove the `validate_html`, `get_parser_info` methods.
+    - Simplify the parser selection logic. It should try a list of preferred parsers and fall back gracefully. The current implementation is mostly fine, but can be slightly cleaned up.
+
+### 2.5. Simplify Matcher
+The `ElementMatcher` in `src/htmladapt/algorithms/matcher.py` can be simplified.
+- **Reasoning:** The weighted combination of multiple similarity scores is complex. A simpler, more direct approach is preferred.
+- **Action:**
+    - Refactor `_calculate_similarity` to use a simpler priority:
+        1. Perfect ID match (score 1.0).
+        2. Hash-based content match (score 0.95).
+        3. Fuzzy text similarity (score between 0.0 and 1.0).
+    - Remove the structural similarity check (`_structure_similarity`) as it adds complexity for little gain in the core use case.
+
+## 3. Code Restructuring and Flattening
+
+The codebase will be restructured to be flatter and more modular.
+
+### 3.1. Flatten the `src/htmladapt` directory
+-   **Reasoning:** The separation into `core` and `algorithms` is artificial for a small project. A flat structure is easier to navigate.
+-   **Action:**
+    -   Move `config.py`, `extractor_merger.py`, `parser.py` from `src/htmladapt/core` to `src/htmladapt`.
+    -   Move `id_generation.py`, `matcher.py` from `src/htmladapt/algorithms` to `src/htmladapt`.
+    -   Delete the `src/htmladapt/core` and `src/htmladapt/algorithms` directories.
+    -   Rename `src/htmladapt/extractor_merger.py` to `src/htmladapt/tool.py`.
+    -   Update all imports to reflect the new structure.
+
+### 3.2. Consolidate Entry Point
+- **Reasoning:** The `src/htmladapt/htmladapt.py` file is just a facade for imports. This is unnecessary.
+- **Action:**
+    - Delete `src/htmladapt/htmladapt.py`.
+    - Expose the main classes (`HTMLExtractMergeTool`, `ProcessingConfig`) directly from `src/htmladapt/__init__.py`.
+
+The new structure will be:
+```
+src/htmladapt/
+├── __init__.py
+├── __main__.py
+├── tool.py           # (was extractor_merger.py)
+├── config.py
+├── parser.py
+├── id_generation.py
+└── matcher.py
+```
+
+## 4. CLI Simplification
+
+- **Reasoning:** The CLI in `src/htmladapt/__main__.py` is verbose. It can be simplified to be more command-line friendly and less "graphical".
+- **Action:**
+    - Remove `rich` progress bars, tables, and panels. Use simple `print` statements for output.
+    - Remove options related to LLM.
+    - Simplify the `extract` and `merge` commands.
+
+## 5. Documentation and Tests
+
+-   **Action:**
+    -   Update `README.md` and files in `docs/` to reflect the simplified API and removed features.
+    -   Remove tests for `llm`, `utils`, and other deleted features.
+    -   Update existing tests to match the new simplified configuration and API.
+    -   Ensure test coverage for the core functionality remains high.
+
+## Implementation Steps
+
+1.  **Branch:** Create a new git branch for the refactoring work (e.g., `refactor/simplification`).
+2.  **Remove Modules:** Delete `src/htmladapt/llm` and `src/htmladapt/utils`.
+3.  **Simplify `config.py`:** Apply the planned simplifications to `ProcessingConfig`.
+4.  **Simplify `parser.py`:** Remove `validate_html` and other non-essential methods.
+5.  **Simplify `matcher.py`:** Refactor the similarity calculation.
+6.  **Update `tool.py`:** Remove logic related to LLM, utils, and complex config from `src/htmladapt/core/extractor_merger.py`.
+7.  **Run Tests & Fix:** Run tests, see them fail, and then update them to reflect the changes. Remove tests for deleted features.
+8.  **Flatten Structure:** Move files from `core` and `algorithms` to `src/htmladapt`, rename `extractor_merger.py` to `tool.py`, and update all imports.
+9.  **Consolidate Entry Point:** Delete `src/htmladapt/htmladapt.py` and update `src/htmladapt/__init__.py`.
+10. **Simplify CLI:** Refactor `src/htmladapt/__main__.py`.
+11. **Update Documentation:** Update `README.md` and `docs/`.
+12. **Final Test Run:** Ensure all tests pass.
+13. **Review and Merge:** Create a pull request for review.
 
 </document_content>
 </document>
@@ -3405,345 +3477,13 @@ For academic use:
 </document>
 
 <document index="14">
-<source>REVIEW-GEMI.md</source>
-<document_content>
-# Code Review: htmladapt
-
-This review evaluates the quality, structure, and maintainability of the `htmladapt` codebase based on the Python source files and associated tests.
-
-## Overall Assessment
-
-The `htmladapt` project is a solid tool for HTML content extraction and merging. It features a clear modular design, good test coverage, and flexible configuration through the `ProcessingConfig` class.
-
-The codebase is generally well-structured but has room for improvement in error handling, documentation consistency, and LLM integration design.
-
-## Strengths
-
-*   **Project Structure:** Clean organization into `core`, `algorithms`, `llm`, and `utils` modules
-*   **Configuration Management:** `ProcessingConfig` class with factory methods for different performance profiles
-*   **Comprehensive Testing:** Good unit and integration test coverage
-*   **Modularity:** Well-encapsulated components like `IDGenerator`, `ElementMatcher`, and `HTMLParser`
-*   **Robust Parsing:** Fallback mechanism for different HTML parsing backends
-*   **Extensible Architecture:** Design supports future enhancements
-
-## Areas for Improvement
-
-### 1. Inconsistent Docstrings
-
-Documentation format varies across modules. Some use reStructuredText style, others are free-form.
-
-**Recommendation:** Standardize on Google Python Style Guide format for consistent, tool-friendly documentation.
-
-### 2. Generic Exception Handling
-
-Broad `except Exception` blocks in `HTMLExtractMergeTool.extract` and `merge` methods obscure error sources.
-
-**File:** `src/htmladapt/core/extractor_merger.py`
-
-```python
-def extract(self, html: str) -> tuple[str, str]:
-    ...
-    except Exception as e:
-        logger.error(f"Extraction failed: {e}")
-        raise
-```
-
-**Recommendation:** Catch specific exceptions (`ValueError`, `TypeError`, etc.) with more detailed context.
-
-### 3. Tight Coupling in LLMReconciler
-
-The class directly depends on OpenAI API, making it difficult to swap providers or use local models.
-
-**File:** `src/htmladapt/llm/reconciler.py`
-
-**Recommendation:** Create an abstract base class defining a common interface. `OpenAIReconciler` becomes one implementation.
-
-### 4. Missing Type Hint for llm_reconciler
-
-The parameter lacks proper type annotation.
-
-**File:** `src/htmladapt/core/extractor_merger.py`
-
-```python
-def __init__(
-    self,
-    config: ProcessingConfig | None = None,
-    llm_reconciler=None  # Optional LLM integration
-) -> None:
-```
-
-**Recommendation:** Add type hint using the abstract base class from recommendation #3.
-
-```python
-from htmladapt.llm.base import BaseReconciler
-
-def __init__(
-    self,
-    config: ProcessingConfig | None = None,
-    llm_reconciler: BaseReconciler | None = None
-) -> None:
-```
-
-### 5. Hardcoded Weights in ElementMatcher
-
-Similarity calculation uses fixed weights that can't be adjusted by users.
-
-**File:** `src/htmladapt/algorithms/matcher.py`
-
-```python
-def _calculate_similarity(self, elem1: Tag, elem2: Tag) -> float:
-    ...
-    combined_score = (
-        id_score * 0.4 +
-        hash_score * 0.3 +
-        text_score * 0.2 +
-        structure_score * 0.1
-    )
-```
-
-**Recommendation:** Move weights to `ProcessingConfig` to make them user-configurable.
-
-### 6. Redundant HTML Parsing
-
-`original_html` gets parsed into `original_soup` but may not be used in the merging logic.
-
-**Recommendation:** Verify if parsing `original_html` is necessary. Remove if redundant for minor performance gains.
-
-## Actionable Recommendations
-
-1.  **Standardize Docstrings:** Apply consistent Google style format throughout
-2.  **Refactor Exception Handling:** Replace broad exception blocks with specific catches
-3.  **Abstract LLM Reconciler:** Create `BaseReconciler` interface and update type hints
-4.  **Make Matcher Weights Configurable:** Move similarity weights to `ProcessingConfig`
-5.  **Review Parser Usage:** Remove unnecessary parsing in `merge` method if confirmed redundant
-</document_content>
-</document>
-
-<document index="15">
-<source>REVIEW-GPT.md</source>
-<document_content>
-# HTMLAdapt Code Review
-
-## Critical Findings
-
-1. **Translated inline content is not propagated into nested elements**  
-   - Location: `src/htmladapt/core/extractor_merger.py:280-302`  
-   - During merge, only top-level `NavigableString` nodes are stripped before inserting translated text. Nested tags remain untouched. For markup like `<p>Prefix <strong>Inner</strong> Suffix</p>`, the result is `Translated<strong>Inner</strong>`—inner text stays unchanged.  
-   - Repro:  
-     ```python
-     tool = HTMLExtractMergeTool()
-     html = """<html><body><p>Prefix <strong>Inner</strong> Suffix</p></body></html>"""
-     superset, subset = tool.extract(html)
-     merged = tool.merge(subset.replace("Prefix Inner Suffix", "Translated"), subset, superset, html)
-     assert "<strong>Inner" not in merged  # currently fails
-     ```
-   - Impact: Sentences with inline formatting (links, emphasis, spans) retain original inner text, breaking translation workflows.  
-   - Fix: Replace the target element entirely (`full_elem.clear(); full_elem.append(...)`) or traverse both trees to update descendant text nodes according to subset edits.
-
-2. **Parser preference ignored when rebuilding soups**  
-   - Location: `src/htmladapt/core/extractor_merger.py:147-148` and `src/htmladapt/core/extractor_merger.py:163-170`  
-   - `_create_superset` and `_create_subset` hard-code `features=self.parser._available_parsers[0]`, using detection order (`["lxml", "html5lib", "html.parser"]`). This overrides `ProcessingConfig.parser_preference`. Users requesting `html.parser` for whitespace preservation or `html5lib` for malformed markup still get forced through `lxml`, reintroducing issues the initial parse avoided.  
-   - Fix: Capture the builder used during `parse` (e.g., `soup.builder.name`) or reuse the original soup via `copy.copy`/`copy.deepcopy` to maintain consistent parser behavior.
-
-3. **LLM reconciliation path is unused**  
-   - Location: `src/htmladapt/core/extractor_merger.py:24-41` (initialization) with no further references  
-   - `HTMLExtractMergeTool` accepts `llm_reconciler` and exposes `ProcessingConfig.llm_use`, but the merge pipeline never calls `self.llm_reconciler`. The AI conflict-resolution feature is dead code.  
-   - Fix: When `llm_use` is true and matcher confidence is low, pass candidate texts to `LLMReconciler.resolve_conflict` and apply its output. Add tests that toggle the config and verify reconciler invocation.
-
-## Additional Recommendations
-
-- Add regression tests for inline formatting translation (e.g., `<p>Text <em>inline</em></p>`) to `tests/test_extractor_merger.py` to expose the merge bug.
-- Replace direct access to `HTMLParser._available_parsers` with a public API method that returns the preferred parser name.
-- Limit growth of `_used_ids` or reset it per document to prevent unbounded ID accumulation when processing multiple files with the same tool instance.
-</document_content>
-</document>
-
-<document index="16">
-<source>TODO.md</source>
-<document_content>
-# HTMLAdapt TODO
-
-the_file: TODO.md
-
-- [x] Add regression test covering inline formatted text translation.
-- [x] Update merge logic so translated text reaches nested inline elements.
-- [x] Ensure superset/subset reuse the configured parser preference and add tests.
-- [x] Wire LLM reconciler hook into merge with minimal interface and stub test.
-- [x] Tighten exception handling only where touched by the above work.
-
-</document_content>
-</document>
-
-<document index="17">
-<source>WORK.md</source>
-<document_content>
-# HTMLAdapt Work Progress
-
-## Implementation Summary
-
-Successfully implemented a comprehensive HTMLAdapt tool for intelligent HTML content extraction and merging. The implementation follows the architectural plan and includes all core functionality.
-
-## Completed Features
-
-### Core Infrastructure ✅
-- **HTML Parser Module** - Multi-backend parser with lxml → html5lib → html.parser fallback system
-- **ID Generation System** - Base36-encoded, collision-free ID generation with hierarchical traceability
-- **Configuration Management** - Flexible ProcessingConfig with fast/balanced/accurate profiles
-
-### Content Processing ✅
-- **Content Extractor** - Identifies and extracts translatable content while preserving structure
-- **Element Matcher** - Multi-strategy matching (perfect ID, hash-based, fuzzy text similarity)
-- **Content Merger** - Intelligent three-way merge logic that preserves HTML structure and attributes
-
-### Advanced Features ✅
-- **LLM Integration** - OpenAI API integration for conflict resolution (ready for use when API key provided)
-- **Performance Optimization** - Memory-efficient processing with configurable performance profiles
-- **Error Handling** - Robust handling of malformed HTML, encoding issues, and edge cases
-
-### Package Structure ✅
-Created a well-organized package structure:
-```
-src/htmladapt/
-├── core/               # Core extraction and merging functionality
-│   ├── config.py       # Configuration classes
-│   ├── parser.py       # Multi-backend HTML parsing
-│   └── extractor_merger.py  # Main HTMLExtractMergeTool implementation
-├── algorithms/         # Matching and ID generation algorithms
-│   ├── id_generation.py     # Unique ID generation
-│   └── matcher.py           # Element matching strategies
-├── llm/               # LLM integration for conflict resolution
-│   └── reconciler.py       # OpenAI API integration
-├── utils/             # Utility functions
-│   └── helpers.py          # HTML validation and optimization helpers
-└── __init__.py        # Main package exports
-```
-
-## Testing Results ✅
-
-**All 51 tests passing!** Comprehensive test coverage including:
-
-- **Unit Tests** (27 tests) - Individual component testing
-  - Configuration validation and profiles
-  - HTML parser with multiple backends
-  - ID generation with collision detection
-  - Element matching algorithms
-  - Core extraction/merge functionality
-
-- **Integration Tests** (8 tests) - End-to-end workflow testing
-  - Translation workflow simulation
-  - Content editing workflows
-  - Round-trip content preservation
-  - Large document processing
-  - Malformed HTML handling
-
-- **Component Tests** (16 tests) - Parser and utility testing
-  - Multi-backend HTML parsing
-  - Encoding detection and handling
-  - HTML validation functionality
-  - Error handling and recovery
-
-## Key Achievements
-
-### 🚀 Performance
-- Multi-parser fallback system ensures robust HTML processing
-- Configurable performance profiles (fast/balanced/accurate)
-- Memory-efficient processing suitable for large documents
-
-### 🎯 Accuracy
-- Multi-strategy element matching with 70%+ default similarity threshold
-- Preserves HTML structure, attributes, CSS classes, and JavaScript references
-- Intelligent content reconciliation with minimal data loss
-
-### 🛡️ Robustness
-- Handles malformed HTML gracefully with automatic parser fallbacks
-- Comprehensive error handling and recovery mechanisms
-- Extensive input validation and edge case handling
-
-### 🔧 Usability
-- Clean, intuitive API following the documented interface
-- Configurable processing with sensible defaults
-- Comprehensive logging and debugging support
-
-## API Compatibility
-
-Implemented all documented APIs:
-
-```python
-from htmladapt import HTMLExtractMergeTool, ProcessingConfig
-
-# Basic usage
-tool = HTMLExtractMergeTool()
-superset, subset = tool.extract(original_html)
-final_html = tool.merge(cnew_path, subset, superset, original_html)
-
-# Advanced configuration
-config = ProcessingConfig.accurate_profile(id_prefix="trans_")
-tool = HTMLExtractMergeTool(config=config)
-```
-
-## Dependencies Added
-
-Successfully integrated high-quality packages:
-- **beautifulsoup4** - HTML parsing and manipulation
-- **lxml** - Fast XML/HTML parsing with XPath support
-- **html5lib** - Browser-like HTML parsing for malformed content
-- **rapidfuzz** - Fast fuzzy string matching
-- **xxhash** - High-speed content hashing
-- **zss** - Tree edit distance algorithms
-- **python-Levenshtein** - LCS and edit distance computations
-
-## Test Results Summary
-
-```
-============================= test session starts ==============================
-...
-============================== 51 passed in 0.85s ==============================
-```
-
-- **51/51 tests passing** ✅
-- **100% success rate** ✅
-- **Fast execution** (0.85s total) ✅
-- **No warnings or errors** ✅
-
-## Next Steps
-
-The HTMLAdapt implementation is now feature-complete and ready for use. Future enhancements could include:
-
-1. **Additional LLM Providers** - Anthropic Claude, Google Gemini integration
-2. **Performance Optimizations** - Parallel processing for very large documents
-3. **Advanced Matching** - Machine learning-based content similarity
-4. **Web Interface** - Visual diff interface for conflict resolution
-5. **Plugin System** - Custom matching algorithm plugins
-
-## Implementation Quality
-
-- ✅ **Type Hints** - All public APIs include comprehensive type annotations
-- ✅ **Documentation** - Detailed docstrings following PEP 257
-- ✅ **Error Handling** - Comprehensive exception handling with informative messages
-- ✅ **Logging** - Structured logging for debugging and monitoring
-- ✅ **Testing** - 90%+ test coverage with unit, integration, and edge case tests
-- ✅ **Code Quality** - Follows PEP 8 style guidelines and best practices
-
-The HTMLAdapt tool is now a production-ready solution for intelligent HTML content extraction and merging workflows.
-## Current Iteration
-- Focus: regression for inline formatting, parser preference respect, LLM hook wiring, targeted exception tightening.
-- Pending Tests: add new unit tests before implementation.
-- Completed inline formatting regression test and merge fix so translations replace stale inline markup.
-- Ensured parser clones reuse requested backend and validated with a dedicated unit test.
-- Added LLM reconciliation hook with stubbed coverage and narrowed ValueError handling.
-- Tests: `uvx hatch test` (54 passed).
-
-</document_content>
-</document>
-
-<document index="18">
 <source>build.sh</source>
 <document_content>
 #!/usr/bin/env bash
 DIR="$(dirname "$0")"
 cd "$DIR"
 uvx hatch clean;
-fd -e py -x autoflake {};
+fd -e py -x autoflake -i {};
 fd -e py -x pyupgrade --py312-plus {};
 fd -e py -x ruff check --output-format=github --fix --unsafe-fixes {};
 fd -e py -x ruff format --respect-gitignore --target-version py312 {};
@@ -3764,7 +3504,7 @@ uv pip install --system --upgrade -e .
 </document_content>
 </document>
 
-<document index="19">
+<document index="15">
 <source>docs/_config.yml</source>
 <document_content>
 
@@ -3809,7 +3549,7 @@ heading_anchors: true
 </document_content>
 </document>
 
-<document index="20">
+<document index="16">
 <source>docs/api.md</source>
 <document_content>
 ---
@@ -3866,7 +3606,7 @@ optimized_html = optimize_for_size(html_content, target_size_mb
 </document_content>
 </document>
 
-<document index="21">
+<document index="17">
 <source>docs/contributing.md</source>
 <document_content>
 ---
@@ -3931,7 +3671,7 @@ htmladapt/
 </document_content>
 </document>
 
-<document index="22">
+<document index="18">
 <source>docs/index.md</source>
 <document_content>
 # HTMLAdapt: HTML Content Extraction and Merge Tool
@@ -4005,7 +3745,7 @@ Handles broken HTML, deep nesting, and other messes without crashing. Includes f
 </document_content>
 </document>
 
-<document index="23">
+<document index="19">
 <source>docs/usage.md</source>
 <document_content>
 Here's the revised version of your document with editorial improvements for clarity, precision, and conciseness:
@@ -4140,7 +3880,7 @@ Let me know if you'd like to tailor this for a specific audience or purpose.
 </document_content>
 </document>
 
-<document index="24">
+<document index="20">
 <source>issues/101.txt</source>
 <document_content>
 <GOAL>
@@ -4245,21 +3985,21 @@ Read @external/ref/ @external/ref/cla.md @external/ref/gemi.md @external/ref/gpt
 </document_content>
 </document>
 
-<document index="25">
+<document index="21">
 <source>issues/102.txt</source>
 <document_content>
 Read the full codebase (or the @llms.txt codebase snapshot) and read @PLAN.md and @TODO.md and also read @REVIEW-GPT.md and @REVIEW-GEMI.md and then completely rewrite @PLAN.md so that it focuses on the necessary improvements to the codebase. Then translate that plan into a flat itemized task list in @TODO.md and then /work on implementing the improvements. Don’t overcomplicate the code, keep it lean and performant! 
 </document_content>
 </document>
 
-<document index="26">
+<document index="22">
 <source>issues/201.txt</source>
 <document_content>
 In 'docs' folder update the Jekyll source site for this repo https://github.com/twardoch/htmladapt with `remote_theme: just-the-docs/just-the-docs` which will be hosted on http://twardoch.github.io/htmladapt —— this site needs to contain the Markdown sources and Jekyll structure for an extensive, informative, friendly, useful, easy-to-follow modern documentation for our `htmladapt` package. 
 </document_content>
 </document>
 
-<document index="27">
+<document index="23">
 <source>md.txt</source>
 <document_content>
 
@@ -4282,7 +4022,7 @@ In 'docs' folder update the Jekyll source site for this repo https://github.com/
 </document_content>
 </document>
 
-<document index="28">
+<document index="24">
 <source>package.toml</source>
 <document_content>
 # Package configuration
@@ -4299,7 +4039,7 @@ github_actions = true   # Add GitHub Actions workflows
 </document_content>
 </document>
 
-<document index="29">
+<document index="25">
 <source>pyproject.toml</source>
 <document_content>
 # this_file: pyproject.toml
@@ -4738,7 +4478,7 @@ unfixable = [
 
 ]
 # Configure extend-exclude to ignore specific directories
-extend-exclude = [".git", ".venv", "venv", "dist", "build"]
+# extend-exclude = [".git", ".venv", "venv", "dist", "build"]
 
 # isort configuration wicomp Ruff
 [tool.ruff.lint.isort]
@@ -4765,9 +4505,8 @@ ban-relative-imports = 'all' # Ban all relative imports for consistency
 # Language: python
 
 from htmladapt.__version__ import __version__
-from htmladapt.core.config import ProcessingConfig
-from htmladapt.core.extractor_merger import HTMLExtractMergeTool
-from htmladapt.llm.reconciler import LLMReconciler
+from htmladapt.config import ProcessingConfig
+from htmladapt.tool import HTMLExtractMergeTool
 
 
 # File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/__main__.py
@@ -4775,19 +4514,12 @@ from htmladapt.llm.reconciler import LLMReconciler
 
 import sys
 from pathlib import Path
-from typing import Optional, Union
 import fire
-from rich.console import Console
-from rich.panel import Panel
-from rich.progress import Progress, SpinnerColumn, TextColumn
-from rich.table import Table
-from htmladapt import HTMLExtractMergeTool, ProcessingConfig, LLMReconciler
+from htmladapt import HTMLExtractMergeTool, ProcessingConfig
 from htmladapt.__version__ import __version__
-import os
 
 class HTMLAdaptCLI:
     """HTMLAdapt command-line interface."""
-    def __init__((self)) -> None:
     def version((self)) -> None:
         """Display version information."""
     def extract((
@@ -4796,7 +4528,6 @@ class HTMLAdaptCLI:
         map_path: str | Path | None = None,
         comp_path: str | Path | None = None,
         id_prefix: str = "xhq",
-        perf: str = "balanced",
     )) -> None:
         """Extract content from HTML file into map_path and subset documents."""
     def merge((
@@ -4808,13 +4539,8 @@ class HTMLAdaptCLI:
         new_path: str | Path | None = None,
         id_prefix: str = "xhq",
         simi_level: float = 0.7,
-        llm_use: bool = False,
-        model_llm: str = "gpt-4o-mini",
-        perf: str = "balanced",
     )) -> None:
         """Merge edited content back into old_path HTML structure."""
-
-def __init__((self)) -> None:
 
 def version((self)) -> None:
     """Display version information."""
@@ -4825,7 +4551,6 @@ def extract((
         map_path: str | Path | None = None,
         comp_path: str | Path | None = None,
         id_prefix: str = "xhq",
-        perf: str = "balanced",
     )) -> None:
     """Extract content from HTML file into map_path and subset documents."""
 
@@ -4838,9 +4563,6 @@ def merge((
         new_path: str | Path | None = None,
         id_prefix: str = "xhq",
         simi_level: float = 0.7,
-        llm_use: bool = False,
-        model_llm: str = "gpt-4o-mini",
-        perf: str = "balanced",
     )) -> None:
     """Merge edited content back into old_path HTML structure."""
 
@@ -4848,18 +4570,24 @@ def main(()) -> None:
     """Main CLI entry point."""
 
 
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/algorithms/__init__.py
+# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/config.py
 # Language: python
 
-from htmladapt.algorithms.id_generation import IDGenerator
-from htmladapt.algorithms.matcher import ElementMatcher
+from dataclasses import dataclass
+
+class ProcessingConfig:
+    """Configuration settings for HTMLAdapt processing."""
+    def __post_init__((self)) -> None:
+        """Validate configuration values."""
+
+def __post_init__((self)) -> None:
+    """Validate configuration values."""
 
 
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/algorithms/id_generation.py
+# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/id_generation.py
 # Language: python
 
 import logging
-from typing import Optional, Set
 
 class IDGenerator:
     """Generates unique, collision-free IDs for HTML elements."""
@@ -4898,13 +4626,12 @@ def stats((self)) -> dict[str, int]:
     """Get generator statistics."""
 
 
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/algorithms/matcher.py
+# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/matcher.py
 # Language: python
 
 import hashlib
 import logging
-from typing import Dict, List, Optional, Tuple
-from bs4 import Tag, NavigableString
+from bs4 import NavigableString, Tag
 from rapidfuzz import fuzz
 import xxhash
 
@@ -4926,8 +4653,6 @@ class ElementMatcher:
         """Calculate text-based fuzzy similarity."""
     def _simple_text_similarity((self, elem1: Tag, elem2: Tag)) -> float:
         """Simple text similarity fallback when rapidfuzz is not available."""
-    def _structure_similarity((self, elem1: Tag, elem2: Tag)) -> float:
-        """Calculate structural similarity between elements."""
     def _get_content_hash((self, element: Tag)) -> str:
         """Generate content hash for an element."""
     def _get_element_text((self, element: Tag)) -> str:
@@ -4958,9 +4683,6 @@ def _text_similarity((self, elem1: Tag, elem2: Tag)) -> float:
 def _simple_text_similarity((self, elem1: Tag, elem2: Tag)) -> float:
     """Simple text similarity fallback when rapidfuzz is not available."""
 
-def _structure_similarity((self, elem1: Tag, elem2: Tag)) -> float:
-    """Calculate structural similarity between elements."""
-
 def _get_content_hash((self, element: Tag)) -> str:
     """Generate content hash for an element."""
 
@@ -4971,64 +4693,48 @@ def clear_cache((self)) -> None:
     """Clear the content cache."""
 
 
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/core/__init__.py
-# Language: python
-
-from htmladapt.core.config import ProcessingConfig
-from htmladapt.core.extractor_merger import HTMLExtractMergeTool
-
-
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/core/config.py
-# Language: python
-
-from dataclasses import dataclass
-from typing import Literal, Optional
-
-class ProcessingConfig:
-    """Configuration settings for HTMLAdapt processing."""
-    def __post_init__((self)) -> None:
-        """Validate and set default values after initialization."""
-
-def __post_init__((self)) -> None:
-    """Validate and set default values after initialization."""
-
-def fast_profile((cls, **kwargs)) -> "ProcessingConfig":
-    """Create a configuration optimized for speed."""
-
-def accurate_profile((cls, **kwargs)) -> "ProcessingConfig":
-    """Create a configuration optimized for accuracy."""
-
-def balanced_profile((cls, **kwargs)) -> "ProcessingConfig":
-    """Create a configuration with balanced speed and accuracy."""
-
-
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/core/extractor_merger.py
+# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/parser.py
 # Language: python
 
 import logging
-from typing import Optional, Tuple, TYPE_CHECKING
+from bs4 import BeautifulSoup
+
+class HTMLParser:
+    """Simple HTML parser with automatic fallback."""
+    def __init__((self)) -> None:
+        """Initialize the parser."""
+    def parse((self, content: str | bytes, encoding: str | None = None)) -> BeautifulSoup:
+        """Parse HTML content using the first available parser."""
+    def clone_soup((self, soup: BeautifulSoup)) -> BeautifulSoup:
+        """Clone a soup object using the same parser that created it."""
+
+def __init__((self)) -> None:
+    """Initialize the parser."""
+
+def parse((self, content: str | bytes, encoding: str | None = None)) -> BeautifulSoup:
+    """Parse HTML content using the first available parser."""
+
+def clone_soup((self, soup: BeautifulSoup)) -> BeautifulSoup:
+    """Clone a soup object using the same parser that created it."""
+
+
+# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/tool.py
+# Language: python
+
+import logging
 from bs4 import BeautifulSoup, Tag
-from htmladapt.algorithms.id_generation import IDGenerator
-from htmladapt.algorithms.matcher import ElementMatcher
-from htmladapt.core.config import ProcessingConfig
-from htmladapt.core.parser import HTMLParser
-from htmladapt.llm.reconciler import ReconcilerProtocol
+from htmladapt.config import ProcessingConfig
+from htmladapt.id_generation import IDGenerator
+from htmladapt.matcher import ElementMatcher
+from htmladapt.parser import HTMLParser
 
 class HTMLExtractMergeTool:
     """Main tool for HTML content extraction and merging."""
-    def __init__((
-        self,
-        config: ProcessingConfig | None = None,
-        llm_reconciler: Optional[
-            "ReconcilerProtocol"
-        ] = None,  # Optional LLM integration
-    )) -> None:
+    def __init__((self, config: ProcessingConfig | None = None)) -> None:
         """Initialize the HTMLExtractMergeTool."""
     def extract((self, html: str)) -> tuple[str, str]:
         """Extract content from HTML document."""
-    def merge((
-        self, cnew_path: str, cold_path: str, superset: str, original: str
-    )) -> str:
+    def merge((self, cnew_path: str, cold_path: str, superset: str, original: str)) -> str:
         """Merge edited content back into the original structure."""
     def _register_existing_ids((self, soup: BeautifulSoup)) -> None:
         """Register existing element IDs to avoid collisions."""
@@ -5042,36 +4748,20 @@ class HTMLExtractMergeTool:
         """Check if element should be included in subset for translation."""
     def _extract_text_content((self, element: Tag)) -> str:
         """Extract direct text content from element."""
-    def _match_comp_elements((
-        self, edited_soup: BeautifulSoup, original_comp_soup: BeautifulSoup
-    )) -> list:
+    def _match_comp_elements((self, edited_soup: BeautifulSoup, original_comp_soup: BeautifulSoup)) -> list:
         """Match elements between edited and original subset documents."""
-    def _apply_llm_resolution((self, matches: list)) -> list:
-        """Use the LLM reconciler to strengthen low-confidence matches."""
-    def _apply_changes_to_superset((
-        self, matches: list, full_soup: BeautifulSoup
-    )) -> BeautifulSoup:
+    def _apply_changes_to_superset((self, matches: list, full_soup: BeautifulSoup)) -> BeautifulSoup:
         """Apply matched changes to the superset document."""
     def _cleanup_generated_ids((self, soup: BeautifulSoup)) -> BeautifulSoup:
         """Remove generated IDs from the final document."""
-    def validate_html((self, content: str)) -> tuple[bool, list[str]]:
-        """Validate HTML content."""
 
-def __init__((
-        self,
-        config: ProcessingConfig | None = None,
-        llm_reconciler: Optional[
-            "ReconcilerProtocol"
-        ] = None,  # Optional LLM integration
-    )) -> None:
+def __init__((self, config: ProcessingConfig | None = None)) -> None:
     """Initialize the HTMLExtractMergeTool."""
 
 def extract((self, html: str)) -> tuple[str, str]:
     """Extract content from HTML document."""
 
-def merge((
-        self, cnew_path: str, cold_path: str, superset: str, original: str
-    )) -> str:
+def merge((self, cnew_path: str, cold_path: str, superset: str, original: str)) -> str:
     """Merge edited content back into the original structure."""
 
 def _register_existing_ids((self, soup: BeautifulSoup)) -> None:
@@ -5092,215 +4782,24 @@ def _is_translatable_element((self, element: Tag)) -> bool:
 def _extract_text_content((self, element: Tag)) -> str:
     """Extract direct text content from element."""
 
-def _match_comp_elements((
-        self, edited_soup: BeautifulSoup, original_comp_soup: BeautifulSoup
-    )) -> list:
+def _match_comp_elements((self, edited_soup: BeautifulSoup, original_comp_soup: BeautifulSoup)) -> list:
     """Match elements between edited and original subset documents."""
 
-def _apply_llm_resolution((self, matches: list)) -> list:
-    """Use the LLM reconciler to strengthen low-confidence matches."""
-
-def _apply_changes_to_superset((
-        self, matches: list, full_soup: BeautifulSoup
-    )) -> BeautifulSoup:
+def _apply_changes_to_superset((self, matches: list, full_soup: BeautifulSoup)) -> BeautifulSoup:
     """Apply matched changes to the superset document."""
 
 def _cleanup_generated_ids((self, soup: BeautifulSoup)) -> BeautifulSoup:
     """Remove generated IDs from the final document."""
 
-def validate_html((self, content: str)) -> tuple[bool, list[str]]:
-    """Validate HTML content."""
-
 def stats((self)) -> dict:
     """Get processing statistics."""
-
-
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/core/parser.py
-# Language: python
-
-import logging
-from typing import Optional, Union
-from bs4 import BeautifulSoup
-import lxml
-import html5lib
-
-class HTMLParser:
-    """Multi-backend HTML parser with fallback support."""
-    def __init__((self, parser_preference: list[str] | None = None)) -> None:
-        """Initialize the parser with preferred backend order."""
-    def _check_available_parsers((self)) -> list[str]:
-        """Check which parsers are available on the system."""
-    def parse((self, content: str | bytes, encoding: str | None = None)) -> BeautifulSoup:
-        """Parse HTML content using the first available parser."""
-    def clone_soup((self, soup: BeautifulSoup)) -> BeautifulSoup:
-        """Clone a soup object using the same parser that created it."""
-    def _decode_content((self, content: bytes)) -> str:
-        """Attempt to decode bytes content with common encodings."""
-    def validate_html((self, content: str)) -> tuple[bool, list[str]]:
-        """Validate HTML content and return any parsing issues."""
-    def get_parser_info((self)) -> dict[str, bool]:
-        """Get information about parser availability."""
-    def _resolve_default_parser((self)) -> str:
-        """Determine which parser should be used by default."""
-
-def __init__((self, parser_preference: list[str] | None = None)) -> None:
-    """Initialize the parser with preferred backend order."""
-
-def _check_available_parsers((self)) -> list[str]:
-    """Check which parsers are available on the system."""
-
-def parse((self, content: str | bytes, encoding: str | None = None)) -> BeautifulSoup:
-    """Parse HTML content using the first available parser."""
-
-def clone_soup((self, soup: BeautifulSoup)) -> BeautifulSoup:
-    """Clone a soup object using the same parser that created it."""
-
-def _decode_content((self, content: bytes)) -> str:
-    """Attempt to decode bytes content with common encodings."""
-
-def validate_html((self, content: str)) -> tuple[bool, list[str]]:
-    """Validate HTML content and return any parsing issues."""
-
-def available_parsers((self)) -> list[str]:
-    """Get list of available parser backends."""
-
-def default_parser((self)) -> str:
-    """Return the parser that will be used when no specific preference is set."""
-
-def get_parser_info((self)) -> dict[str, bool]:
-    """Get information about parser availability."""
-
-def _resolve_default_parser((self)) -> str:
-    """Determine which parser should be used by default."""
-
-
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/htmladapt.py
-# Language: python
-
-from htmladapt.core.config import ProcessingConfig
-from htmladapt.core.extractor_merger import HTMLExtractMergeTool
-from htmladapt.llm.reconciler import LLMReconciler
-from htmladapt.utils.helpers import validate_html, estimate_processing_time, optimize_for_size
-
-
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/llm/__init__.py
-# Language: python
-
-from htmladapt.llm.reconciler import LLMReconciler
-
-
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/llm/reconciler.py
-# Language: python
-
-import logging
-from typing import Dict, List, Optional, Protocol, runtime_checkable
-from openai import OpenAI
-import json
-
-class ReconcilerProtocol(P, r, o, t, o, c, o, l):
-    """Protocol defining the expected reconciler interface."""
-    def resolve_conflict((
-        self,
-        edited_content: str,
-        original_candidates: list[str],
-        context: dict | None = None,
-    )) -> dict:
-        """Resolve a content matching conflict."""
-    def is_available((self)) -> bool:
-        """Return True if reconciliation can be attempted."""
-
-class LLMReconciler:
-    """LLM-powered reconciler for resolving complex matching conflicts."""
-    def __init__((
-        self, api_key: str, model: str = "gpt-4o-mini", max_context_tokens: int = 1000
-    )) -> None:
-        """Initialize the LLM reconciler."""
-    def resolve_conflict((
-        self,
-        edited_content: str,
-        original_candidates: list[str],
-        context: dict | None = None,
-    )) -> dict:
-        """Resolve matching conflict using LLM."""
-    def _build_resolution_prompt((
-        self,
-        edited_content: str,
-        original_candidates: list[str],
-        context: dict | None = None,
-    )) -> str:
-        """Build prompt for LLM conflict resolution."""
-    def _parse_llm_response((self, response, num_candidates: int)) -> dict:
-        """Parse LLM response into structured result."""
-    def is_available((self)) -> bool:
-        """Check if LLM reconciliation is available."""
-
-def resolve_conflict((
-        self,
-        edited_content: str,
-        original_candidates: list[str],
-        context: dict | None = None,
-    )) -> dict:
-    """Resolve a content matching conflict."""
-
-def is_available((self)) -> bool:
-    """Return True if reconciliation can be attempted."""
-
-def __init__((
-        self, api_key: str, model: str = "gpt-4o-mini", max_context_tokens: int = 1000
-    )) -> None:
-    """Initialize the LLM reconciler."""
-
-def resolve_conflict((
-        self,
-        edited_content: str,
-        original_candidates: list[str],
-        context: dict | None = None,
-    )) -> dict:
-    """Resolve matching conflict using LLM."""
-
-def _build_resolution_prompt((
-        self,
-        edited_content: str,
-        original_candidates: list[str],
-        context: dict | None = None,
-    )) -> str:
-    """Build prompt for LLM conflict resolution."""
-
-def _parse_llm_response((self, response, num_candidates: int)) -> dict:
-    """Parse LLM response into structured result."""
-
-def is_available((self)) -> bool:
-    """Check if LLM reconciliation is available."""
-
-
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/utils/__init__.py
-# Language: python
-
-from htmladapt.utils.helpers import validate_html, estimate_processing_time, optimize_for_size
-
-
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/utils/helpers.py
-# Language: python
-
-import logging
-from typing import Tuple, List
-from htmladapt.core.parser import HTMLParser
-
-def validate_html((content: str)) -> tuple[bool, list[str]]:
-    """Validate HTML content and return any parsing issues."""
-
-def estimate_processing_time((content: str)) -> tuple[float, int]:
-    """Estimate processing time and memory requirements for HTML content."""
-
-def optimize_for_size((content: str, target_size_mb: int)) -> str:
-    """Optimize HTML content for memory constraints."""
 
 
 # File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/tests/test_config.py
 # Language: python
 
 import pytest
-from htmladapt.core.config import ProcessingConfig
+from htmladapt.config import ProcessingConfig
 
 class TestProcessingConfig:
     """Test ProcessingConfig functionality."""
@@ -5310,18 +4809,6 @@ class TestProcessingConfig:
         """Test custom configuration values."""
     def test_simi_level_validation((self)):
         """Test similarity threshold validation."""
-    def test_max_context_tokens_validation((self)):
-        """Test max context tokens validation."""
-    def test_memory_limit_validation((self)):
-        """Test memory limit validation."""
-    def test_fast_profile((self)):
-        """Test fast profile creation."""
-    def test_accurate_profile((self)):
-        """Test accurate profile creation."""
-    def test_balanced_profile((self)):
-        """Test balanced profile creation."""
-    def test_profile_with_overrides((self)):
-        """Test profile creation with custom overrides."""
 
 def test_default_config((self)):
     """Test default configuration values."""
@@ -5332,32 +4819,13 @@ def test_custom_config((self)):
 def test_simi_level_validation((self)):
     """Test similarity threshold validation."""
 
-def test_max_context_tokens_validation((self)):
-    """Test max context tokens validation."""
-
-def test_memory_limit_validation((self)):
-    """Test memory limit validation."""
-
-def test_fast_profile((self)):
-    """Test fast profile creation."""
-
-def test_accurate_profile((self)):
-    """Test accurate profile creation."""
-
-def test_balanced_profile((self)):
-    """Test balanced profile creation."""
-
-def test_profile_with_overrides((self)):
-    """Test profile creation with custom overrides."""
-
 
 # File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/tests/test_extractor_merger.py
 # Language: python
 
 import pytest
-from htmladapt.core.extractor_merger import HTMLExtractMergeTool
-from htmladapt.core.config import ProcessingConfig
-from bs4 import BeautifulSoup
+from htmladapt.config import ProcessingConfig
+from htmladapt.tool import HTMLExtractMergeTool
 from bs4 import BeautifulSoup
 
 class TestHTMLExtractMergeTool:
@@ -5374,8 +4842,6 @@ class TestHTMLExtractMergeTool:
         """Test extraction with complex HTML structure."""
     def test_empty_html_handling((self)):
         """Test handling of empty or minimal HTML."""
-    def test_validation_functionality((self)):
-        """Test HTML validation functionality."""
     def test_stats_functionality((self)):
         """Test statistics functionality."""
     def test_custom_config((self)):
@@ -5388,15 +4854,6 @@ class TestHTMLExtractMergeTool:
         """Test internal text extraction functionality."""
     def test_merge_when_inline_markup_removed_then_insert_plain_text((self)):
         """Ensure translations replacing inline markup fully override original content."""
-    def test_merge_uses_llm_reconciler_for_unmatched_elements((self)):
-        """Verify that the LLM reconciler resolves low-confidence matches when enabled."""
-
-class StubReconciler:
-    def __init__((self)):
-    def resolve_conflict((
-                self, edited_content, original_candidates, context=None
-            )):
-    def is_available((self)) -> bool:
 
 def setup_method((self)):
     """Set up test fixtures."""
@@ -5416,9 +4873,6 @@ def test_complex_html_extraction((self)):
 def test_empty_html_handling((self)):
     """Test handling of empty or minimal HTML."""
 
-def test_validation_functionality((self)):
-    """Test HTML validation functionality."""
-
 def test_stats_functionality((self)):
     """Test statistics functionality."""
 
@@ -5437,23 +4891,12 @@ def test_element_text_extraction((self)):
 def test_merge_when_inline_markup_removed_then_insert_plain_text((self)):
     """Ensure translations replacing inline markup fully override original content."""
 
-def test_merge_uses_llm_reconciler_for_unmatched_elements((self)):
-    """Verify that the LLM reconciler resolves low-confidence matches when enabled."""
-
-def __init__((self)):
-
-def resolve_conflict((
-                self, edited_content, original_candidates, context=None
-            )):
-
-def is_available((self)) -> bool:
-
 
 # File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/tests/test_id_generation.py
 # Language: python
 
 import pytest
-from htmladapt.algorithms.id_generation import IDGenerator
+from htmladapt.id_generation import IDGenerator
 
 class TestIDGenerator:
     """Test IDGenerator functionality."""
@@ -5572,7 +5015,7 @@ def test_version(()):
 # Language: python
 
 import pytest
-from htmladapt.core.parser import HTMLParser
+from htmladapt.parser import HTMLParser
 
 class TestHTMLParser:
     """Test HTMLParser functionality."""
@@ -5588,24 +5031,8 @@ class TestHTMLParser:
         """Test parsing bytes input with UTF-8 encoding."""
     def test_bytes_input_with_encoding((self)):
         """Test parsing bytes input with specified encoding."""
-    def test_parser_preference((self)):
-        """Test parser preference configuration."""
-    def test_available_parsers((self)):
-        """Test available parsers property."""
-    def test_parser_info((self)):
-        """Test parser info functionality."""
     def test_clone_preserves_parser_choice((self)):
         """Cloning should reuse the parser chosen for the original soup."""
-    def test_html_validation_valid((self)):
-        """Test HTML validation with valid HTML."""
-    def test_html_validation_warnings((self)):
-        """Test HTML validation with warnings."""
-    def test_html_validation_invalid((self)):
-        """Test HTML validation with invalid HTML."""
-    def test_decode_content_utf8((self)):
-        """Test content decoding with UTF-8."""
-    def test_decode_content_fallback((self)):
-        """Test content decoding with fallback to replacement."""
 
 def setup_method((self)):
     """Set up test fixtures."""
@@ -5625,32 +5052,8 @@ def test_bytes_input_utf8((self)):
 def test_bytes_input_with_encoding((self)):
     """Test parsing bytes input with specified encoding."""
 
-def test_parser_preference((self)):
-    """Test parser preference configuration."""
-
-def test_available_parsers((self)):
-    """Test available parsers property."""
-
-def test_parser_info((self)):
-    """Test parser info functionality."""
-
 def test_clone_preserves_parser_choice((self)):
     """Cloning should reuse the parser chosen for the original soup."""
-
-def test_html_validation_valid((self)):
-    """Test HTML validation with valid HTML."""
-
-def test_html_validation_warnings((self)):
-    """Test HTML validation with warnings."""
-
-def test_html_validation_invalid((self)):
-    """Test HTML validation with invalid HTML."""
-
-def test_decode_content_utf8((self)):
-    """Test content decoding with UTF-8."""
-
-def test_decode_content_fallback((self)):
-    """Test content decoding with fallback to replacement."""
 
 
 </documents>

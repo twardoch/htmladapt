@@ -1,8 +1,7 @@
-# this_file: src/htmladapt/algorithms/id_generation.py
+# this_file: src/htmladapt/id_generation.py
 """ID generation system for HTML elements."""
 
 import logging
-from typing import Optional, Set
 
 logger = logging.getLogger(__name__)
 

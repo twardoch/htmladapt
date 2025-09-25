@@ -7,14 +7,11 @@ through an intermediate representation.
 """
 
 from htmladapt.__version__ import __version__
-
-from htmladapt.core.config import ProcessingConfig
-from htmladapt.core.extractor_merger import HTMLExtractMergeTool
-from htmladapt.llm.reconciler import LLMReconciler
+from htmladapt.config import ProcessingConfig
+from htmladapt.tool import HTMLExtractMergeTool
 
 __all__ = [
-    "__version__",
     "HTMLExtractMergeTool",
     "ProcessingConfig",
-    "LLMReconciler",
+    "__version__",
 ]

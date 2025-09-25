@@ -1,11 +1,10 @@
-# this_file: src/htmladapt/algorithms/matcher.py
+# this_file: src/htmladapt/matcher.py
 """Element matching algorithms for content reconciliation."""
 
 import hashlib
 import logging
-from typing import Dict, List, Optional, Tuple
 
-from bs4 import Tag, NavigableString
+from bs4 import NavigableString, Tag
 
 try:
     from rapidfuzz import fuzz
@@ -91,28 +90,16 @@ class ElementMatcher:
         Returns:
             Similarity score between 0.0 and 1.0
         """
-        # Strategy 1: Perfect ID matching (highest priority)
-        id_score = self._id_similarity(elem1, elem2)
-        if id_score == 1.0:
+        # 1. Perfect ID match (highest priority)
+        if self._id_similarity(elem1, elem2) == 1.0:
             return 1.0
 
-        # Strategy 2: Hash-based content matching
-        hash_score = self._hash_similarity(elem1, elem2)
-        if hash_score == 1.0:
-            return 0.95  # Slightly lower than perfect ID match
+        # 2. Hash-based content match
+        if self._hash_similarity(elem1, elem2) == 1.0:
+            return 0.95
 
-        # Strategy 3: Fuzzy text matching
-        text_score = self._text_similarity(elem1, elem2)
-
-        # Strategy 4: Structural similarity
-        structure_score = self._structure_similarity(elem1, elem2)
-
-        # Combine scores with weights
-        combined_score = (
-            id_score * 0.4 + hash_score * 0.3 + text_score * 0.2 + structure_score * 0.1
-        )
-
-        return combined_score
+        # 3. Fuzzy text similarity
+        return self._text_similarity(elem1, elem2)
 
     def _id_similarity(self, elem1: Tag, elem2: Tag) -> float:
         """Calculate ID-based similarity.
@@ -168,8 +155,7 @@ class ElementMatcher:
             return 0.0
 
         # Use rapidfuzz for accurate fuzzy matching
-        similarity = fuzz.ratio(text1, text2) / 100.0
-        return similarity
+        return fuzz.ratio(text1, text2) / 100.0
 
     def _simple_text_similarity(self, elem1: Tag, elem2: Tag) -> float:
         """Simple text similarity fallback when rapidfuzz is not available.
@@ -186,7 +172,7 @@ class ElementMatcher:
 
         if text1 == text2:
             return 1.0
-        elif text1 and text2:
+        if text1 and text2:
             # Simple Jaccard similarity on words
             words1 = set(text1.lower().split())
             words2 = set(text2.lower().split())
@@ -200,36 +186,6 @@ class ElementMatcher:
             return len(intersection) / len(union) if union else 0.0
 
         return 0.0
-
-    def _structure_similarity(self, elem1: Tag, elem2: Tag) -> float:
-        """Calculate structural similarity between elements.
-
-        Args:
-            elem1: First element
-            elem2: Second element
-
-        Returns:
-            Structural similarity score
-        """
-        # Compare tag names
-        if elem1.name != elem2.name:
-            return 0.0
-
-        # Compare attributes (excluding generated IDs)
-        attrs1 = {k: v for k, v in elem1.attrs.items() if not k.startswith("id")}
-        attrs2 = {k: v for k, v in elem2.attrs.items() if not k.startswith("id")}
-
-        if attrs1 == attrs2:
-            return 1.0
-
-        # Partial attribute matching
-        common_attrs = set(attrs1.keys()) & set(attrs2.keys())
-        total_attrs = set(attrs1.keys()) | set(attrs2.keys())
-
-        if not total_attrs:
-            return 1.0  # Both have no attributes
-
-        return len(common_attrs) / len(total_attrs)
 
     def _get_content_hash(self, element: Tag) -> str:
         """Generate content hash for an element.
@@ -249,10 +205,7 @@ class ElementMatcher:
         tag_info = f"{element.name}:{element.attrs}"
         hash_input = f"{tag_info}|{content}".encode()
 
-        if xxhash:
-            content_hash = xxhash.xxh64(hash_input).hexdigest()
-        else:
-            content_hash = hashlib.sha256(hash_input).hexdigest()[:16]
+        content_hash = xxhash.xxh64(hash_input).hexdigest() if xxhash else hashlib.sha256(hash_input).hexdigest()[:16]
 
         self._content_cache[element_id] = content_hash
         return content_hash
@@ -266,10 +219,7 @@ class ElementMatcher:
         Returns:
             Normalized text content
         """
-        if hasattr(element, "get_text"):
-            text = element.get_text(separator=" ", strip=True)
-        else:
-            text = str(element).strip()
+        text = element.get_text(separator=" ", strip=True) if hasattr(element, "get_text") else str(element).strip()
 
         # Normalize whitespace
         return " ".join(text.split())
