@@ -4,7 +4,7 @@
 
 1. **Translated inline content is not propagated into nested elements**  
    - Location: `src/htmladapt/core/extractor_merger.py:280-302`  
-   - During merge the code only strips top-level `NavigableString` nodes before inserting the translated text, leaving any nested tags untouched. When translating markup such as `<p>Prefix <strong>Inner</strong> Suffix</p>`, the resulting HTML becomes `Translated<strong>Inner</strong>`—the inner text never updates.  
+   - During merge, only top-level `NavigableString` nodes are stripped before inserting translated text. Nested tags remain untouched. For markup like `<p>Prefix <strong>Inner</strong> Suffix</p>`, the result is `Translated<strong>Inner</strong>`—inner text stays unchanged.  
    - Repro:  
      ```python
      tool = HTMLExtractMergeTool()
@@ -13,21 +13,21 @@
      merged = tool.merge(subset.replace("Prefix Inner Suffix", "Translated"), subset, superset, html)
      assert "<strong>Inner" not in merged  # currently fails
      ```
-   - Impact: Any sentence containing inline formatting (links, emphasis, spans) keeps the old inner text, breaking translation workflows.  
-   - Suggested fix: replace the target element entirely (e.g., via `superset_elem.clear(); superset_elem.append(...)`) or walk both trees to rewrite descendant text nodes according to the subset edits.
+   - Impact: Sentences with inline formatting (links, emphasis, spans) retain original inner text, breaking translation workflows.  
+   - Fix: Replace the target element entirely (`superset_elem.clear(); superset_elem.append(...)`) or traverse both trees to update descendant text nodes according to subset edits.
 
-2. **Configured parser preference is ignored when rebuilding the superset/subset soups**  
+2. **Parser preference ignored when rebuilding soups**  
    - Location: `src/htmladapt/core/extractor_merger.py:147-148` and `src/htmladapt/core/extractor_merger.py:163-170`  
-   - Both `_create_superset` and `_create_subset` hard-code `features=self.parser._available_parsers[0]`, which is the detection order (`["lxml", "html5lib", "html.parser"]`). This bypasses `ProcessingConfig.parser_preference`. Users requesting `html.parser` to preserve whitespace, or falling back to `html5lib` because `lxml` chokes on malformed markup, still get forced through `lxml` here, reintroducing the failure the initial parse already avoided.  
-   - Suggested fix: capture the builder actually used during `parse` (e.g., `soup.builder.name`) or reuse the original soup through `copy.copy`/`copy.deepcopy`, so the configured preference is honored consistently.
+   - `_create_superset` and `_create_subset` hard-code `features=self.parser._available_parsers[0]`, using detection order (`["lxml", "html5lib", "html.parser"]`). This overrides `ProcessingConfig.parser_preference`. Users requesting `html.parser` for whitespace preservation or `html5lib` for malformed markup still get forced through `lxml`, reintroducing issues the initial parse avoided.  
+   - Fix: Capture the builder used during `parse` (e.g., `soup.builder.name`) or reuse the original soup via `copy.copy`/`copy.deepcopy` to maintain consistent parser behavior.
 
-3. **LLM reconciliation path is never invoked**  
-   - Location: `src/htmladapt/core/extractor_merger.py:24-41` (initialisation) with no subsequent references  
-   - `HTMLExtractMergeTool` accepts `llm_reconciler` and exposes `ProcessingConfig.enable_llm_resolution`, yet the merge pipeline never calls into `self.llm_reconciler`. The advertised AI conflict-resolution feature is therefore dead code.  
-   - Suggested fix: when `enable_llm_resolution` is true and matcher confidence is below threshold, pass the candidate texts to `LLMReconciler.resolve_conflict` and apply its decision. Add coverage that toggles the config and asserts the reconciler is invoked.
+3. **LLM reconciliation path is unused**  
+   - Location: `src/htmladapt/core/extractor_merger.py:24-41` (initialization) with no further references  
+   - `HTMLExtractMergeTool` accepts `llm_reconciler` and exposes `ProcessingConfig.enable_llm_resolution`, but the merge pipeline never calls `self.llm_reconciler`. The AI conflict-resolution feature is dead code.  
+   - Fix: When `enable_llm_resolution` is true and matcher confidence is low, pass candidate texts to `LLMReconciler.resolve_conflict` and apply its output. Add tests that toggle the config and verify reconciler invocation.
 
 ## Additional Recommendations
 
-- Add regression tests covering inline formatting translation (e.g., `<p>Text <em>inline</em></p>`) to `tests/test_extractor_merger.py` so the merge bug surfaces.
-- Consider exposing a documented API rather than reaching into `HTMLParser._available_parsers`; a public helper that returns a preferred parser name would make `_create_superset` more robust.
-- Tighten validation around the rapidly growing `_used_ids` pool or reset it per document to prevent unbounded ID growth when the same tool instance processes many files.
+- Add regression tests for inline formatting translation (e.g., `<p>Text <em>inline</em></p>`) to `tests/test_extractor_merger.py` to expose the merge bug.
+- Replace direct access to `HTMLParser._available_parsers` with a public API method that returns the preferred parser name.
+- Limit growth of `_used_ids` or reset it per document to prevent unbounded ID accumulation when processing multiple files with the same tool instance.

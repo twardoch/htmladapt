@@ -1,0 +1,16 @@
+
+
+/Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/docs/api.md
+/Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/docs/contributing.md
+/Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/docs/index.md
+/Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/docs/usage.md
+
+
+
+
+/Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/README.md
+/Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/REVIEW-GEMI.md
+/Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/REVIEW-GPT.md
+/Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/SPEC.md
+
+

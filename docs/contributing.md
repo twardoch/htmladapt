@@ -1,95 +1,59 @@
-
 ---
-title: Contributing
 layout: default
+title: Contributing
 nav_order: 4
-parent: Home
 ---
 
 # Contributing
 
-We welcome contributions to the `htmladapt` project! Whether it's reporting a bug, suggesting a feature, or submitting code, your help is appreciated.
+We welcome contributions. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-## Development Setup
-
-To get started with development, follow these steps:
-
-1.  **Clone the repository:**
-
-    ```bash
-    git clone https://github.com/twardoch/htmladapt.git
-    cd htmladapt
-    ```
-
-2.  **Create and activate a virtual environment:**
-
-    ```bash
-    # Using Python's built-in venv
-    python -m venv venv
-    source venv/bin/activate  # On Windows: venv\Scripts\activate
-    ```
-
-3.  **Install dependencies:**
-
-    Install the package in editable mode with all development and testing dependencies.
-
-    ```bash
-    pip install -e ".[dev,test,llm]"
-    ```
-
-## Running Tests
-
-`htmladapt` includes a comprehensive test suite to ensure code quality and prevent regressions. To run the tests:
+### Development Setup
 
 ```bash
-# Run all unit and integration tests
+# Clone the repository
+git clone https://github.com/yourusername/htmladapt.git
+cd htmladapt
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install in development mode
+pip install -e ".[dev,test,llm]"
+
+# Run tests
 pytest
 
-# Run tests with coverage reporting
-pytest --cov=htmladapt
-```
-
-## Code Quality
-
-We use `black` for code formatting and `ruff` for linting. Before submitting a pull request, please ensure your code adheres to the project's style guidelines.
-
-```bash
-# Format the code
-black htmladapt/ tests/
-
-# Run the linter
-ruff check htmladapt/ tests/
-
-# Run the static type checker
+# Run type checking
 mypy htmladapt/
+
+# Format code
+black htmladapt/
+ruff check htmladapt/
 ```
 
-## Project Architecture
-
-The codebase is organized into logical modules to facilitate development:
+### Codebase Structure
 
 ```
 htmladapt/
-├── core/                  # Core logic
+├── core/
 │   ├── parser.py          # HTML parsing
 │   ├── extractor.py       # Content extraction
-│   ├── matcher.py         # Element matching algorithms
-│   └── merger.py          # Content reconciliation
-├── algorithms/            # Specific algorithms used by the core
-│   ├── id_generation.py   # ID generation strategies
+│   ├── matcher.py         # Element matching
+│   └── merger.py          # Content merging
+├── algorithms/
+│   ├── id_generation.py   # ID generation
+│   ├── tree_diff.py       # Tree comparison
 │   └── fuzzy_match.py     # Similarity scoring
-├── llm/                   # LLM integration
-│   └── reconciler.py      # LLM-based conflict resolution
-├── utils/                 # Utility functions
-│   └── html_utils.py      # HTML processing helpers
+├── llm/
+│   ├── reconciler.py      # LLM integration
+│   └── prompts.py        # Prompt templates
+├── utils/
+│   ├── html_utils.py      # HTML utilities
+│   └── performance.py    # Performance tools
 └── tests/
-    ├── unit/              # Unit tests for individual components
-    └── integration/       # End-to-end workflow tests
+    ├── unit/             # Unit tests
+    ├── integration/      # Integration tests
+    └── benchmarks/       # Performance benchmarks
 ```
-
-## Submitting Changes
-
-1.  Create a new branch for your feature or bug fix.
-2.  Make your changes and add or update tests as needed.
-3.  Ensure all tests pass and the code is formatted correctly.
-4.  Push your branch to GitHub and open a pull request with a clear description of your changes.
