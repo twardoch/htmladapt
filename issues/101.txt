@@ -1,0 +1,98 @@
+<GOAL>
+Let's say I have an original web page that's extensive and has a lot of non-text elements (like code), and the markup is generally large (eg. lots of classes). I'd like to have a Py tool that: has two operations: "extract" and "merge".
+
+Extract would make a "superset" page where to all "relevant" HTML elements (those that contain text) that don't have an HTML id attr, we add such attrs that are easily identifiable as those added (eg. they have some prefix), and the IDs are compact.
+
+Then the operation makes a "subset" page where it keeps only the "relevant" HTML elements. So we get a subset page that has some markup and lots of IDs, and the markup amount is less than in the original page. And the superset page acts as a bridge between the original page and the subset page.
+
+Then I can perform some editing on the subset page, including full translation. I make sure that all or most IDs stay. Let's call the result the edited page. 
+
+And then the tool's merge operation would take the edited page, the subset page, the superset page and the original page, and would produce the new page. The new page would have the edited page's content but the original page's structure and markup. 
+
+Generally with the mapping of edited+subset+superset+original, any DOM branch between the edited and the original could be a perfect or imperfect match. A perfect match would be match of all the IDs all the way to the final elements of a branch.
+
+But if some HTML IDs got lost (or added) during editing, or there was some sequence change (for example some spans had to be swapped in translation), that creates imperfect matches of a tree. 
+
+Our tool should be smart. It should employ various clever techniques and algorithms to merge the branches, and for imperfect matches it should call an LLM (with the shortest possible branch that cannot be perfectly matched algorithmically.
+
+## HTML Content Extraction and Merge Tool Specification
+
+### Overview
+
+Design and implement a Python tool for bidirectional HTML document transformation that preserves structural integrity while enabling content modification through an intermediate representation.
+
+### Core Operations
+
+#### 1. Extract Operation
+
+**Input:** Original HTML document with complex markup and non-text elements  
+**Outputs:**
+
+- **Superset Document:** Enhanced version of the original where:
+  - All text-containing HTML elements lacking ID attributes receive generated unique identifiers
+  - Generated IDs follow a distinguishable pattern (e.g., specific prefix scheme)
+  - IDs are compact and systematically assigned
+  - Original structure and markup remain intact
+- **Subset Document:** Minimal representation containing:
+  - Only text-bearing HTML elements from the superset
+  - Preserved ID attributes for element mapping
+  - Reduced markup complexity while maintaining hierarchical relationships
+  - Serves as lightweight editing interface
+
+#### 2. Merge Operation
+
+**Inputs:**
+
+- Edited document (modified subset with potential ID changes/losses)
+- Original subset document (pre-edit reference)
+- Superset document (ID-enhanced original)
+- Original document (unmodified source)
+
+**Output:** Final merged document combining:
+
+- Content from the edited document
+- Structure and styling from the original document
+- Intelligent reconciliation of modifications
+
+### Matching and Reconciliation Strategy
+
+#### Perfect Match Scenario
+
+- Complete ID correspondence throughout a DOM branch
+- Direct one-to-one mapping from edited to original elements
+- Straightforward content substitution preserving original attributes
+
+#### Imperfect Match Handling
+
+**Challenges to address:**
+
+- Missing IDs due to editing operations
+- Additional IDs introduced during modification
+- Structural changes (e.g., element reordering for translation requirements)
+- Partial branch matches with divergent sub-branches
+
+**Resolution Approach:**
+
+- Implement hierarchical matching algorithms with fuzzy matching capabilities
+- Employ heuristic-based element correspondence detection
+- Utilize LLM integration for ambiguous cases, specifically:
+  - Invoke only for minimal unresolvable branch segments
+  - Optimize prompt context to include only essential structural information
+  - Implement fallback strategies for LLM unavailability
+
+### Technical Requirements
+
+- Robust HTML parsing and manipulation
+- ID generation scheme ensuring uniqueness and traceability
+- Diff-based change detection between subset versions
+- Tree reconciliation algorithms for structural alignment
+- LLM API integration with prompt optimization
+- Comprehensive handling of edge cases (malformed HTML, nested complexity, attribute preservation)
+</GOAL>
+
+<TASK>
+Read @external/ref/ @external/ref/cla.md @external/ref/gemi.md @external/ref/gpt.md @external/ref/phind.md @external/ref/pplx.md and then: 
+
+- into @SPEC.md write a very detailed spec for the tool. Explain the objective, the goal, the rationale, the structure, the way it works, the how and the why. Be very detailed and extensive and specific. Include code portions. Make it easy to understand for a junior developer so that he can develop and maintain the code. 
+- into @README.md write a description of the tool (as if already existed). Explain the objective, the goal, the rationale, the structure, the way it works, the how and the why. Be very detailed and extensive and specific. Make it easy to understand for a junior developer so that he can develop and maintain the code. 
+</TASK>
