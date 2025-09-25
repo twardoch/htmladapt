@@ -34,6 +34,7 @@ Project Structure:
 │       │   ├── 📄 __init__.py
 │       │   └── 📄 helpers.py
 │       ├── 📄 __init__.py
+│       ├── 📄 __main__.py
 │       └── 📄 htmladapt.py
 ├── 📁 tests
 │   ├── 📄 test_config.py
@@ -4344,6 +4345,8 @@ dependencies = [
     "xxhash>=3.0.0",          # High-speed non-cryptographic hashing
     "zss>=1.2.0",             # Zhang-Shasha tree edit distance algorithm
     "python-Levenshtein>=0.20.0",  # Fast LCS and edit distance algorithms
+    "fire>=0.4.0",            # CLI interface creation
+    "rich>=13.0.0",           # Terminal styling and formatting
 ]
 
 # Author information
@@ -4413,7 +4416,7 @@ all = [
 # Entry points for command-line executables installed with the package.
 #------------------------------------------------------------------------------
 [project.scripts]
-# CLINAME = "htmladapt.__main__:main"
+htmladapt = "htmladapt.__main__:main"
 
 #------------------------------------------------------------------------------
 # BUILD SYSTEM CONFIGURATION
@@ -4765,6 +4768,109 @@ from htmladapt.__version__ import __version__
 from htmladapt.core.config import ProcessingConfig
 from htmladapt.core.extractor_merger import HTMLExtractMergeTool
 from htmladapt.llm.reconciler import LLMReconciler
+
+
+# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/__main__.py
+# Language: python
+
+import sys
+from pathlib import Path
+from typing import Optional, Union
+import fire
+from rich.console import Console
+from rich.panel import Panel
+from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.table import Table
+from htmladapt import HTMLExtractMergeTool, ProcessingConfig, LLMReconciler
+from htmladapt.__version__ import __version__
+import os
+
+class HTMLAdaptCLI:
+    """HTMLAdapt command-line interface."""
+    def __init__((self)) -> None:
+    def version((self)) -> None:
+        """Display version information."""
+    def extract((
+        self,
+        input_file: str | Path,
+        superset_output: str | Path | None = None,
+        subset_output: str | Path | None = None,
+        id_prefix: str = "auto_",
+        performance_profile: str = "balanced"
+    )) -> None:
+        """Extract content from HTML file into superset and subset documents."""
+    def merge((
+        self,
+        edited_subset: str | Path,
+        original_subset: str | Path,
+        superset: str | Path,
+        original: str | Path,
+        output: str | Path | None = None,
+        id_prefix: str = "auto_",
+        similarity_threshold: float = 0.7,
+        enable_llm: bool = False,
+        llm_model: str = "gpt-4o-mini",
+        performance_profile: str = "balanced"
+    )) -> None:
+        """Merge edited content back into original HTML structure."""
+    def process((
+        self,
+        input_file: str | Path,
+        output_file: str | Path | None = None,
+        id_prefix: str = "auto_",
+        similarity_threshold: float = 0.7,
+        enable_llm: bool = False,
+        llm_model: str = "gpt-4o-mini",
+        performance_profile: str = "balanced",
+        keep_intermediates: bool = False
+    )) -> None:
+        """Full extract-edit-merge workflow with external editor."""
+
+def __init__((self)) -> None:
+
+def version((self)) -> None:
+    """Display version information."""
+
+def extract((
+        self,
+        input_file: str | Path,
+        superset_output: str | Path | None = None,
+        subset_output: str | Path | None = None,
+        id_prefix: str = "auto_",
+        performance_profile: str = "balanced"
+    )) -> None:
+    """Extract content from HTML file into superset and subset documents."""
+
+def merge((
+        self,
+        edited_subset: str | Path,
+        original_subset: str | Path,
+        superset: str | Path,
+        original: str | Path,
+        output: str | Path | None = None,
+        id_prefix: str = "auto_",
+        similarity_threshold: float = 0.7,
+        enable_llm: bool = False,
+        llm_model: str = "gpt-4o-mini",
+        performance_profile: str = "balanced"
+    )) -> None:
+    """Merge edited content back into original HTML structure."""
+
+def process((
+        self,
+        input_file: str | Path,
+        output_file: str | Path | None = None,
+        id_prefix: str = "auto_",
+        similarity_threshold: float = 0.7,
+        enable_llm: bool = False,
+        llm_model: str = "gpt-4o-mini",
+        performance_profile: str = "balanced",
+        keep_intermediates: bool = False
+    )) -> None:
+    """Full extract-edit-merge workflow with external editor."""
+
+def main(()) -> None:
+    """Main CLI entry point."""
 
 
 # File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/algorithms/__init__.py

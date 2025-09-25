@@ -41,6 +41,8 @@ dependencies = [
     "xxhash>=3.0.0",          # High-speed non-cryptographic hashing
     "zss>=1.2.0",             # Zhang-Shasha tree edit distance algorithm
     "python-Levenshtein>=0.20.0",  # Fast LCS and edit distance algorithms
+    "fire>=0.4.0",            # CLI interface creation
+    "rich>=13.0.0",           # Terminal styling and formatting
 ]
 
 # Author information
@@ -110,7 +112,7 @@ all = [
 # Entry points for command-line executables installed with the package.
 #------------------------------------------------------------------------------
 [project.scripts]
-# CLINAME = "htmladapt.__main__:main"
+htmladapt = "htmladapt.__main__:main"
 
 #------------------------------------------------------------------------------
 # BUILD SYSTEM CONFIGURATION
