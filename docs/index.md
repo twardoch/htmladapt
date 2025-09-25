@@ -1,72 +1,77 @@
-
 ---
-title: Home
+# Feel free to add content and custom Front Matter to this file.
+# To modify the layout, see https://just-the-docs.github.io/just-the-docs/docs/navigation-structure/
+
 layout: default
+title: Home
 nav_order: 1
 ---
 
-# HTMLAdapt
+# HTMLAdapt: Intelligent HTML Content Extraction and Merge Tool
 
-**Intelligent HTML Content Extraction and Merge Tool**
-
-HTMLAdapt is a Python-based tool for bidirectional HTML document transformation. It preserves structural integrity while enabling seamless content modification through an intermediate representation. It's perfect for translation workflows, content editing, and any HTML processing where maintaining original formatting and styling is critical.
-
----
+HTMLAdapt is a Python-based tool for bidirectional HTML document transformation that preserves structural integrity while enabling seamless content modification through an intermediate representation. Perfect for translation workflows, content editing, and HTML processing where maintaining original formatting and styling is critical.
 
 ## Why HTMLAdapt?
 
-When working with complex HTML documents that need translation or content editing, traditional approaches often fall short:
+When working with complex HTML documents that need translation or content editing, traditional approaches fall short:
 
-- **Manual editing** risks breaking the document's structure and styling.
-- **Simple find-and-replace** can't handle complex or nested markup patterns.
-- **Most translation tools** mangle HTML or require extensive and costly post-processing.
+- **Manual editing** risks breaking structure and styling
+- **Simple find-replace** can't handle complex markup patterns
+- **Existing tools** lose crucial formatting and hierarchical relationships
+- **Translation tools** often mangle HTML or require extensive post-processing
 
-HTMLAdapt solves these challenges with intelligent algorithms that understand and preserve HTML structure through the entire edit-merge cycle.
+HTMLAdapt solves these challenges with intelligent algorithms that understand HTML structure and preserve it through the entire edit-merge cycle.
 
 ## How It Works
 
-HTMLAdapt uses a sophisticated two-phase workflow:
+HTMLAdapt implements a sophisticated two-phase workflow:
 
-1.  **Extract Phase**: Transforms a complex HTML document into two complementary versions:
-    *   **Superset Document**: The original HTML enhanced with unique IDs on all text-containing elements.
-    *   **Subset Document**: A lightweight version containing only the translatable content, with IDs preserved for mapping.
+### 1. Extract Phase
+Transforms a complex original HTML document into two complementary representations:
 
-2.  **Merge Phase**: Intelligently recombines the edited (e.g., translated) subset with the original structure using advanced reconciliation algorithms.
-
----
-
-## Quick Start
-
-Here is a minimal example of how to use `htmladapt`:
+- **Superset Document**: The original HTML enhanced with unique IDs on all text-containing elements
+- **Subset Document**: A lightweight version containing only translatable content with preserved IDs
 
 ```python
 from htmladapt import HTMLExtractMergeTool
 
-# Initialize the tool
-tool = HTMLExtractMergeTool(id_prefix="trans_")
-
-# 1. Read the original HTML from a file
-with open('document.html', 'r', encoding='utf-8') as f:
-    original_html = f.read()
-
-# 2. Extract content into superset and subset documents
+tool = HTMLExtractMergeTool()
 superset_html, subset_html = tool.extract(original_html)
-
-# 3. Edit the subset (e.g., translate, modify content)
-# In a real workflow, you would send `subset_html` to a translation service.
-edited_subset = subset_html.replace('Hello', 'Hola').replace('World', 'Mundo')
-
-# 4. Merge the edited content back into the original structure
-final_html = tool.merge(
-    edited=edited_subset,
-    subset=subset_html,
-    superset=superset_html,
-    original=original_html
-)
-
-# 5. Save the final, merged HTML
-with open('translated_document.html', 'w', encoding='utf-8') as f:
-    f.write(final_html)
-
-print("Translation complete! Check 'translated_document.html'.")
 ```
+
+### 2. Merge Phase
+Intelligently recombines edited content with the original structure using advanced reconciliation algorithms:
+
+```python
+final_html = tool.merge(
+    edited_subset_html,
+    original_subset_html,
+    superset_html,
+    original_html
+)
+```
+
+## Key Features
+
+### **Perfect Structure Preservation**
+Maintains all original HTML structure, CSS classes, JavaScript references, and formatting while allowing content modification.
+
+### **Intelligent Element Matching**
+Uses multiple sophisticated algorithms to match content between versions:
+- **Perfect ID matching** for unchanged elements
+- **Hash-based signatures** for content similarity
+- **Fuzzy matching** for modified text
+- **LLM integration** for ambiguous cases
+
+### **High Performance**
+Optimized for large documents with:
+- lxml parser for speed (2-3x faster than alternatives)
+- O(n) hash-based matching for most cases
+- Memory-efficient processing
+- Configurable performance profiles
+
+### **AI-Powered Conflict Resolution**
+Integrates with Large Language Models to resolve complex matching scenarios that pure algorithms cannot handle.
+
+### **Robust Error Handling**
+Handles malformed HTML, deeply nested structures, and edge cases gracefully with comprehensive fallback mechanisms.
