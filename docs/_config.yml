@@ -1,0 +1,38 @@
+
+# _config.yml
+# Jekyll configuration for htmladapt documentation
+
+# Site settings
+title: htmladapt
+description: "Intelligent HTML Content Extraction and Merge Tool for translation and content workflows."
+remote_theme: just-the-docs/just-the-docs
+color_scheme: dark
+search_enabled: true
+
+# GitHub Pages settings
+url: "https://twardoch.github.io"
+baseurl: "/htmladapt"
+
+# Just the Docs settings
+# For more options, see: https://just-the-docs.github.io/just-the-docs/docs/configuration/
+callouts:
+  info:
+    title: Info
+    color: blue
+  warning:
+    title: Warning
+    color: yellow
+  danger:
+    title: Danger
+    color: red
+
+# Footer content
+footer_content: "Copyright &copy; 2024 Adam Twardoch. Distributed by an MIT license."
+
+# Aux links for the header
+aux_links:
+  "htmladapt on GitHub":
+    - "https://github.com/twardoch/htmladapt"
+
+# Enable heading anchors
+heading_anchors: true

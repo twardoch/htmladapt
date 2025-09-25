@@ -24,6 +24,7 @@ class HTMLParser:
         """
         self.parser_preference = parser_preference or ["lxml", "html5lib", "html.parser"]
         self._available_parsers = self._check_available_parsers()
+        self._default_parser = self._resolve_default_parser()
 
     def _check_available_parsers(self) -> list[str]:
         """Check which parsers are available on the system.
@@ -83,6 +84,8 @@ class HTMLParser:
                 logger.debug(f"Attempting to parse with {parser_name}")
                 soup = BeautifulSoup(content, parser_name)
                 logger.debug(f"Successfully parsed with {parser_name}")
+                setattr(soup, "_htmladapt_parser", parser_name)
+                self._default_parser = parser_name
                 return soup
 
             except Exception as e:
@@ -97,6 +100,13 @@ class HTMLParser:
             error_msg += f". Last error: {last_exception}"
 
         raise ValueError(error_msg)
+
+    def clone_soup(self, soup: BeautifulSoup) -> BeautifulSoup:
+        """Clone a soup object using the same parser that created it."""
+        parser_name = getattr(soup, "_htmladapt_parser", self._default_parser)
+        clone = BeautifulSoup(str(soup), parser_name)
+        setattr(clone, "_htmladapt_parser", parser_name)
+        return clone
 
     def _decode_content(self, content: bytes) -> str:
         """Attempt to decode bytes content with common encodings.
@@ -162,6 +172,11 @@ class HTMLParser:
         """
         return self._available_parsers.copy()
 
+    @property
+    def default_parser(self) -> str:
+        """Return the parser that will be used when no specific preference is set."""
+        return self._default_parser
+
     def get_parser_info(self) -> dict[str, bool]:
         """Get information about parser availability.
 
@@ -173,3 +188,10 @@ class HTMLParser:
             "html5lib": "html5lib" in self._available_parsers,
             "html.parser": True,  # Always available
         }
+
+    def _resolve_default_parser(self) -> str:
+        """Determine which parser should be used by default."""
+        for parser_name in self.parser_preference:
+            if parser_name in self._available_parsers:
+                return parser_name
+        return "html.parser"

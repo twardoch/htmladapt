@@ -2,9 +2,25 @@
 """LLM-powered conflict resolution for HTMLAdapt."""
 
 import logging
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Protocol, runtime_checkable
 
 logger = logging.getLogger(__name__)
+
+
+@runtime_checkable
+class ReconcilerProtocol(Protocol):
+    """Protocol defining the expected reconciler interface."""
+
+    def resolve_conflict(
+        self,
+        edited_content: str,
+        original_candidates: list[str],
+        context: dict | None = None,
+    ) -> dict:
+        """Resolve a content matching conflict."""
+
+    def is_available(self) -> bool:
+        """Return True if reconciliation can be attempted."""
 
 
 class LLMReconciler:

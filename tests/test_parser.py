@@ -74,6 +74,16 @@ class TestHTMLParser:
         assert "html.parser" in info
         assert info["html.parser"] is True  # Always available
 
+    def test_clone_preserves_parser_choice(self):
+        """Cloning should reuse the parser chosen for the original soup."""
+        parser = HTMLParser(parser_preference=["html.parser"])
+        soup = parser.parse("<html><body><p>Clone</p></body></html>")
+
+        clone = parser.clone_soup(soup)
+
+        assert getattr(soup, "_htmladapt_parser") == getattr(clone, "_htmladapt_parser")
+        assert type(soup.builder) is type(clone.builder)
+
     def test_html_validation_valid(self):
         """Test HTML validation with valid HTML."""
         valid_html = "<!DOCTYPE html><html><body><p>Valid HTML</p></body></html>"
