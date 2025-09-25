@@ -2,17 +2,6 @@
 
 HTMLAdapt is a Python-based tool for bidirectional HTML document transformation that preserves structural integrity while enabling seamless content modification through an intermediate representation. Perfect for translation workflows, content editing, and HTML processing where maintaining original formatting and styling is critical.
 
-## Why HTMLAdapt?
-
-When working with complex HTML documents that need translation or content editing, traditional approaches fall short:
-
-- **Manual editing** risks breaking structure and styling
-- **Simple find-replace** can't handle complex markup patterns
-- **Existing tools** lose crucial formatting and hierarchical relationships
-- **Translation tools** often mangle HTML or require extensive post-processing
-
-HTMLAdapt solves these challenges with intelligent algorithms that understand HTML structure and preserve it through the entire edit-merge cycle.
-
 ## How It Works
 
 HTMLAdapt implements a sophisticated two-phase workflow:
@@ -20,8 +9,8 @@ HTMLAdapt implements a sophisticated two-phase workflow:
 ### 1. Extract Phase
 Transforms a complex original HTML document into two complementary representations:
 
-- **Superset Document**: The original HTML enhanced with unique IDs on all text-containing elements
-- **Subset Document**: A lightweight version containing only translatable content with preserved IDs
+- Superset Document: The original HTML enhanced with unique IDs on all text-containing elements
+- Subset Document: A lightweight version containing only translatable content with preserved IDs
 
 ```python
 from htmladapt import HTMLExtractMergeTool
@@ -44,42 +33,23 @@ final_html = tool.merge(
 
 ## Key Features
 
-### **Perfect Structure Preservation**
 Maintains all original HTML structure, CSS classes, JavaScript references, and formatting while allowing content modification.
 
-### **Intelligent Element Matching**
 Uses multiple sophisticated algorithms to match content between versions:
-- **Perfect ID matching** for unchanged elements
-- **Hash-based signatures** for content similarity
-- **Fuzzy matching** for modified text
-- **LLM integration** for ambiguous cases
+- Perfect ID matching for unchanged elements
+- Hash-based signatures for content similarity
+- Fuzzy matching for modified text
+- LLM integration for ambiguous cases
 
-### **High Performance**
 Optimized for large documents with:
 - lxml parser for speed (2-3x faster than alternatives)
 - O(n) hash-based matching for most cases
 - Memory-efficient processing
 - Configurable performance profiles
 
-### **AI-Powered Conflict Resolution**
 Integrates with Large Language Models to resolve complex matching scenarios that pure algorithms cannot handle.
 
-### **Robust Error Handling**
 Handles malformed HTML, deeply nested structures, and edge cases gracefully with comprehensive fallback mechanisms.
-
-## Installation
-
-```bash
-pip install htmladapt
-```
-
-Or install with LLM support:
-
-```bash
-pip install htmladapt[llm]
-```
-
-## Quick Start
 
 ### Basic Usage
 
@@ -147,7 +117,6 @@ final_html = tool.merge(edited_subset, subset_html, superset_html, original_html
 
 ## Use Cases
 
-### **Website Translation**
 Translate website content while preserving all CSS classes, JavaScript functionality, and visual design.
 
 ```python
@@ -161,7 +130,6 @@ translated_subset = translation_service.translate(subset, target_lang='es')
 localized_webpage = tool.merge(translated_subset, subset, superset, webpage_html)
 ```
 
-### **Content Management**
 Edit HTML content in a simplified interface while maintaining complex original structure.
 
 ```python
@@ -175,7 +143,6 @@ edited_content = cms.edit_interface(editable_content)
 updated_article = tool.merge(edited_content, editable_content, superset, article_html)
 ```
 
-### **Documentation Maintenance**
 Update technical documentation while preserving code highlighting, navigation, and styling.
 
 ```python
@@ -189,75 +156,43 @@ updated_text = update_documentation(docs_text)
 final_docs = tool.merge(updated_text, docs_text, superset, documentation_html)
 ```
 
-## Architecture Deep Dive
-
 HTMLAdapt uses a multi-layered approach to ensure reliable HTML processing:
 
 ### Layer 1: Robust HTML Parsing
-- **Primary**: BeautifulSoup with lxml backend for performance
-- **Fallback**: html.parser for malformed HTML
-- **Error Recovery**: Automatic tag closure and structure repair
+- Primary: BeautifulSoup with lxml backend for performance
+- Fallback: html.parser for malformed HTML
+- Error Recovery: Automatic tag closure and structure repair
 
 ### Layer 2: Intelligent ID Generation
-- **Base36 encoding** for compact, collision-free IDs
-- **Hierarchical numbering** for traceability
-- **Collision detection** and prevention
+- Base36 encoding for compact, collision-free IDs
+- Hierarchical numbering for traceability
+- Collision detection and prevention
 
 ### Layer 3: Multi-Strategy Matching
-1. **Perfect Matching**: Identical ID preservation (fastest)
-2. **Hash Matching**: Content signature comparison (fast)
-3. **Fuzzy Matching**: Similarity scoring with difflib (accurate)
-4. **LLM Matching**: Semantic understanding for edge cases (most accurate)
+1. Perfect Matching: Identical ID preservation (fastest)
+2. Hash Matching: Content signature comparison (fast)
+3. Fuzzy Matching: Similarity scoring with difflib (accurate)
+4. LLM Matching: Semantic understanding for edge cases (most accurate)
 
 ### Layer 4: Structural Analysis
-- **LCS algorithms** for sequence reordering detection
-- **Tree diff** algorithms for hierarchical changes
-- **Conflict identification** for manual resolution
+- LCS algorithms for sequence reordering detection
+- Tree diff algorithms for hierarchical changes
+- Conflict identification for manual resolution
 
 ### Layer 5: Smart Reconciliation
-- **Three-way merge** logic from version control systems
-- **Contextual conflict resolution** using minimal LLM calls
-- **Fallback heuristics** for offline operation
-
-## Performance Characteristics
-
-| Document Size | Processing Time | Memory Usage | Recommended Profile |
-|---------------|----------------|--------------|-------------------|
-| < 1MB         | ~100ms         | 4-8MB        | balanced         |
-| 1-10MB        | ~1-5s          | 20-80MB      | fast             |
-| > 10MB        | ~5-30s         | 100-400MB    | fast             |
+- Three-way merge logic from version control systems
+- Contextual conflict resolution using minimal LLM calls
+- Fallback heuristics for offline operation
 
 ## Error Handling
 
 HTMLAdapt gracefully handles common HTML issues:
 
-- **Malformed tags**: Automatic closure and repair
-- **Deeply nested structures**: Configurable depth limits
-- **Large documents**: Memory-efficient streaming
-- **Encoding issues**: Automatic detection and conversion
-- **Missing elements**: Intelligent fallback matching
-
-## Testing and Quality Assurance
-
-HTMLAdapt includes comprehensive test suites:
-
-```bash
-# Run all tests
-pytest tests/
-
-# Run with coverage
-pytest --cov=htmladapt tests/
-
-# Performance benchmarks
-pytest tests/benchmarks/
-```
-
-Test categories:
-- **Unit tests** for individual components
-- **Integration tests** for end-to-end workflows
-- **Performance tests** with various document sizes
-- **Edge case tests** for malformed HTML
-- **Round-trip tests** to ensure content preservation
+- Malformed tags: Automatic closure and repair
+- Deeply nested structures: Configurable depth limits
+- Large documents: Memory-efficient streaming
+- Encoding issues: Automatic detection and conversion
+- Missing elements: Intelligent fallback matching
 
 ## API Reference
 
@@ -266,14 +201,14 @@ Test categories:
 #### `HTMLExtractMergeTool`
 Main interface for extraction and merging operations.
 
-**Methods:**
+Methods:
 - `extract(html: str) -> Tuple[str, str]`: Create superset and subset
 - `merge(edited: str, subset: str, superset: str, original: str) -> str`: Merge content
 
 #### `ProcessingConfig`
 Configuration object for customizing behavior.
 
-**Parameters:**
+Parameters:
 - `id_prefix: str`: Prefix for generated IDs (default: "auto_")
 - `similarity_threshold: float`: Minimum similarity for fuzzy matching (default: 0.7)
 - `enable_llm_resolution: bool`: Use LLM for conflicts (default: False)
@@ -282,7 +217,7 @@ Configuration object for customizing behavior.
 #### `LLMReconciler`
 Interface for LLM-powered conflict resolution.
 
-**Parameters:**
+Parameters:
 - `api_key: str`: OpenAI API key
 - `model: str`: Model name (default: "gpt-4o-mini")
 - `max_context_tokens: int`: Maximum tokens per request (default: 1000)
@@ -304,119 +239,6 @@ time_estimate, memory_estimate = estimate_processing_time(html_content)
 
 # Optimize large documents
 optimized_html = optimize_for_size(html_content, target_size_mb=5)
-```
-
-## Integration Examples
-
-### Flask Web Application
-
-```python
-from flask import Flask, request, jsonify
-from htmladapt import HTMLExtractMergeTool
-
-app = Flask(__name__)
-tool = HTMLExtractMergeTool()
-
-@app.route('/extract', methods=['POST'])
-def extract_content():
-    html = request.json['html']
-    superset, subset = tool.extract(html)
-    return jsonify({
-        'superset': superset,
-        'subset': subset
-    })
-
-@app.route('/merge', methods=['POST'])
-def merge_content():
-    data = request.json
-    result = tool.merge(
-        data['edited'],
-        data['subset'],
-        data['superset'],
-        data['original']
-    )
-    return jsonify({'result': result})
-```
-
-### Django Integration
-
-```python
-# models.py
-from django.db import models
-
-class Document(models.Model):
-    original_html = models.TextField()
-    superset_html = models.TextField()
-    subset_html = models.TextField()
-
-    def extract_content(self):
-        from htmladapt import HTMLExtractMergeTool
-        tool = HTMLExtractMergeTool()
-        self.superset_html, self.subset_html = tool.extract(self.original_html)
-        self.save()
-
-    def merge_content(self, edited_html):
-        from htmladapt import HTMLExtractMergeTool
-        tool = HTMLExtractMergeTool()
-        return tool.merge(
-            edited_html,
-            self.subset_html,
-            self.superset_html,
-            self.original_html
-        )
-```
-
-### Celery Background Processing
-
-```python
-from celery import Celery
-from htmladapt import HTMLExtractMergeTool
-
-app = Celery('htmladapt_tasks')
-tool = HTMLExtractMergeTool()
-
-@app.task
-def process_large_document(html_content, user_id):
-    try:
-        superset, subset = tool.extract(html_content)
-        # Store results or notify user
-        return {'status': 'success', 'subset_id': store_subset(subset)}
-    except Exception as e:
-        return {'status': 'error', 'message': str(e)}
-
-@app.task
-def merge_edited_content(edited_html, subset_html, superset_html, original_html):
-    result = tool.merge(edited_html, subset_html, superset_html, original_html)
-    return result
-```
-
-## Contributing
-
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-### Development Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/htmladapt.git
-cd htmladapt
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install in development mode
-pip install -e ".[dev,test,llm]"
-
-# Run tests
-pytest
-
-# Run type checking
-mypy htmladapt/
-
-# Format code
-black htmladapt/
-ruff check htmladapt/
 ```
 
 ### Architecture for Contributors
@@ -446,34 +268,6 @@ htmladapt/
     └── benchmarks/        # Performance tests
 ```
 
-## License
-
-MIT License - see [LICENSE](LICENSE) file for details.
-
-## Support and Community
-
-- **Documentation**: [https://htmladapt.readthedocs.io](https://htmladapt.readthedocs.io)
-- **Issues**: [GitHub Issues](https://github.com/yourusername/htmladapt/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/htmladapt/discussions)
-- **Email**: support@htmladapt.dev
-
-## Citation
-
-If you use HTMLAdapt in academic research, please cite:
-
-```bibtex
-@software{htmladapt2024,
-  title={HTMLAdapt: Intelligent HTML Content Extraction and Merge Tool},
-  author={Your Name},
-  year={2024},
-  url={https://github.com/yourusername/htmladapt}
-}
-```
-
----
-
-**HTMLAdapt** - Making HTML content transformation intelligent, reliable, and effortless.
-
 <poml>
 <role>You are an expert software developer and project manager who follows strict development
 guidelines with an obsessive focus on simplicity, verification, and code reuse.</role>
@@ -485,11 +279,11 @@ Chain-of-Thought reasoning: "Let me think step by step..." Consider edge cases, 
 modes, and overlooked complexities as part of your initial generation. Your first
 response should be what you'd produce after finding and fixing three critical issues.</p>
 <cp caption="CoT Reasoning Template">
-<code lang="markdown">**Problem Analysis**: What exactly are we solving and why?
-**Constraints**: What limitations must we respect?
-**Solution Options**: What are 2-3 viable approaches with trade-offs?
-**Edge Cases**: What could go wrong and how do we handle it?
-**Test Strategy**: How will we verify this works correctly?</code>
+<code lang="markdown">Problem Analysis: What exactly are we solving and why?
+Constraints: What limitations must we respect?
+Solution Options: What are 2-3 viable approaches with trade-offs?
+Edge Cases: What could go wrong and how do we handle it?
+Test Strategy: How will we verify this works correctly?</code>
 </cp>
 </section>
 <section>

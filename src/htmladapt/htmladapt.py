@@ -1,79 +1,26 @@
-#!/usr/bin/env python3
-"""htmladapt: 
+# this_file: src/htmladapt/htmladapt.py
+"""HTMLAdapt: Legacy module for backwards compatibility.
 
-Created by Adam Twardoch
+This module provides backwards compatibility imports.
+The main implementation is now in htmladapt.core modules.
 """
 
-from dataclasses import dataclass
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
-import logging
+# Import main classes for backwards compatibility
+from htmladapt.core.config import ProcessingConfig
+from htmladapt.core.extractor_merger import HTMLExtractMergeTool
+from htmladapt.llm.reconciler import LLMReconciler
+from htmladapt.utils.helpers import validate_html, estimate_processing_time, optimize_for_size
 
-__version__ = "0.1.0"
+# Legacy alias for backwards compatibility
+Config = ProcessingConfig
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger(__name__)
-
-
-@dataclass
-class Config:
-    """Configuration settings for htmladapt."""
-    name: str
-    value: Union[str, int, float]
-    options: Optional[Dict[str, Any]] = None
-
-
-def process_data(
-    data: List[Any],
-    config: Optional[Config] = None,
-    *,
-    debug: bool = False
-) -> Dict[str, Any]:
-    """Process the input data according to configuration.
-    
-    Args:
-        data: Input data to process
-        config: Optional configuration settings
-        debug: Enable debug mode
-        
-    Returns:
-        Processed data as a dictionary
-        
-    Raises:
-        ValueError: If input data is invalid
-    """
-    if debug:
-        logger.setLevel(logging.DEBUG)
-        logger.debug("Debug mode enabled")
-        
-    if not data:
-        raise ValueError("Input data cannot be empty")
-        
-    # TODO: Implement data processing logic
-    result: Dict[str, Any] = {}
-    return result
-
-
-def main() -> None:
-    """Main entry point for htmladapt."""
-    try:
-        # Example usage
-        config = Config(
-            name="default",
-            value="test",
-            options={"key": "value"}
-        )
-        result = process_data([], config=config)
-        logger.info("Processing completed: %s", result)
-        
-    except Exception as e:
-        logger.error("An error occurred: %s", str(e))
-        raise
-
-
-if __name__ == "__main__":
-    main() 
+__all__ = [
+    "HTMLExtractMergeTool",
+    "ProcessingConfig",
+    "LLMReconciler",
+    "validate_html",
+    "estimate_processing_time",
+    "optimize_for_size",
+    # Legacy compatibility
+    "Config",
+] 

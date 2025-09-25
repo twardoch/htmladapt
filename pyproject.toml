@@ -11,10 +11,11 @@
 #------------------------------------------------------------------------------
 [project]
 name = 'htmladapt' # Package name on PyPI
-description = '' # Short description
+description = 'Intelligent HTML content extraction and merge tool for bidirectional document transformation' # Short description
 readme = 'README.md' # Path to README file
 requires-python = '>=3.10' # Minimum Python version
 keywords = [
+    'html', 'parsing', 'translation', 'content-extraction', 'merge', 'diff', 'reconciliation'
 ] # Keywords for PyPI search
 dynamic = ["version"] # Fields set dynamically at build time
 
@@ -33,6 +34,13 @@ classifiers = [
 ]
 
 dependencies = [
+    "beautifulsoup4>=4.12.0",  # High-level HTML parsing and manipulation
+    "lxml>=5.0.0",            # Fast XML/HTML parsing with XPath support
+    "html5lib>=1.1",          # Browser-like HTML parsing for malformed HTML
+    "rapidfuzz>=3.0.0",       # Fast fuzzy string matching
+    "xxhash>=3.0.0",          # High-speed non-cryptographic hashing
+    "zss>=1.2.0",             # Zhang-Shasha tree edit distance algorithm
+    "python-Levenshtein>=0.20.0",  # Fast LCS and edit distance algorithms
 ]
 
 # Author information
@@ -83,8 +91,18 @@ docs = [
     "myst-parser>=3.0.0", # Markdown support in Sphinx
 ]
 
+# LLM integration dependencies
+llm = [
+    "openai>=1.0.0",          # OpenAI API client for GPT models
+    "httpx>=0.25.0",          # HTTP client for API calls
+    "tenacity>=8.2.0",        # Retry logic for API calls
+]
+
 # All optional dependencies combined
 all = [
+    "openai>=1.0.0",
+    "httpx>=0.25.0",
+    "tenacity>=8.2.0",
 ]
 
 #------------------------------------------------------------------------------
