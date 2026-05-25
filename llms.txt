@@ -10,8 +10,6 @@ Project Structure:
 │   ├── 📄 contributing.md
 │   ├── 📄 index.md
 │   └── 📄 usage.md
-├── 📁 external
-│   └── 📁 ref
 ├── 📁 issues
 │   ├── 📄 101.txt
 │   ├── 📄 102.txt
@@ -2618,7 +2616,6 @@ src/htmladapt/
 11. **Update Documentation:** Update `README.md` and `docs/`.
 12. **Final Test Run:** Ensure all tests pass.
 13. **Review and Merge:** Create a pull request for review.
-
 </document_content>
 </document>
 
@@ -3477,6 +3474,27 @@ For academic use:
 </document>
 
 <document index="14">
+<source>SPEC.md</source>
+<document_content>
+
+</document_content>
+</document>
+
+<document index="15">
+<source>TODO.md</source>
+<document_content>
+
+</document_content>
+</document>
+
+<document index="16">
+<source>WORK.md</source>
+<document_content>
+
+</document_content>
+</document>
+
+<document index="17">
 <source>build.sh</source>
 <document_content>
 #!/usr/bin/env bash
@@ -3500,11 +3518,10 @@ gitnextver .;
 uvx hatch build;
 uv publish;
 uv pip install --system --upgrade -e .
-
 </document_content>
 </document>
 
-<document index="15">
+<document index="18">
 <source>docs/_config.yml</source>
 <document_content>
 
@@ -3545,11 +3562,10 @@ aux_links:
 
 # Enable heading anchors
 heading_anchors: true
-
 </document_content>
 </document>
 
-<document index="16">
+<document index="19">
 <source>docs/api.md</source>
 <document_content>
 ---
@@ -3604,11 +3620,10 @@ time_estimate, memory_estimate = estimate_processing_time(html_content)
 # Optimize large documents
 optimized_html = optimize_for_size(html_content, target_size_mb=5)
 ```
-
 </document_content>
 </document>
 
-<document index="17">
+<document index="20">
 <source>docs/contributing.md</source>
 <document_content>
 ---
@@ -3669,11 +3684,10 @@ htmladapt/
     ├── test_package.py
     └── test_parser.py
 ```
-
 </document_content>
 </document>
 
-<document index="18">
+<document index="21">
 <source>docs/index.md</source>
 <document_content>
 ---
@@ -3734,11 +3748,10 @@ Optimized for large documents with:
 Integrates with Large Language Models to resolve complex matching scenarios that pure algorithms cannot handle.
 
 Handles malformed HTML, deeply nested structures, and edge cases gracefully with comprehensive fallback mechanisms.
-
 </document_content>
 </document>
 
-<document index="19">
+<document index="22">
 <source>docs/usage.md</source>
 <document_content>
 ---
@@ -3867,11 +3880,10 @@ updated_text = update_documentation(docs_text)
 # Merge maintaining syntax highlighting and navigation
 final_docs = tool.merge(updated_text, docs_text, superset, documentation_html)
 ```
-
 </document_content>
 </document>
 
-<document index="20">
+<document index="23">
 <source>issues/101.txt</source>
 <document_content>
 <GOAL>
@@ -3972,25 +3984,24 @@ Read @external/ref/ @external/ref/cla.md @external/ref/gemi.md @external/ref/gpt
 - into @SPEC.md write a very detailed spec for the tool. Explain the objective, the goal, the rationale, the structure, the way it works, the how and the why. Be very detailed and extensive and specific. Include code portions. Make it easy to understand for a junior developer so that he can develop and maintain the code. 
 - into @README.md write a description of the tool (as if already existed). Explain the objective, the goal, the rationale, the structure, the way it works, the how and the why. Be very detailed and extensive and specific. Make it easy to understand for a junior developer so that he can develop and maintain the code. 
 </TASK>
-
 </document_content>
 </document>
 
-<document index="21">
+<document index="24">
 <source>issues/102.txt</source>
 <document_content>
 Read the full codebase (or the @llms.txt codebase snapshot) and read @PLAN.md and @TODO.md and also read @REVIEW-GPT.md and @REVIEW-GEMI.md and then completely rewrite @PLAN.md so that it focuses on the necessary improvements to the codebase. Then translate that plan into a flat itemized task list in @TODO.md and then /work on implementing the improvements. Don’t overcomplicate the code, keep it lean and performant! 
 </document_content>
 </document>
 
-<document index="22">
+<document index="25">
 <source>issues/201.txt</source>
 <document_content>
 In 'docs' folder update the Jekyll source site for this repo https://github.com/twardoch/htmladapt with `remote_theme: just-the-docs/just-the-docs` which will be hosted on http://twardoch.github.io/htmladapt —— this site needs to contain the Markdown sources and Jekyll structure for an extensive, informative, friendly, useful, easy-to-follow modern documentation for our `htmladapt` package. 
 </document_content>
 </document>
 
-<document index="23">
+<document index="26">
 <source>md.txt</source>
 <document_content>
 
@@ -4007,13 +4018,10 @@ In 'docs' folder update the Jekyll source site for this repo https://github.com/
 /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/REVIEW-GEMI.md
 /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/REVIEW-GPT.md
 /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/SPEC.md
-
-
-
 </document_content>
 </document>
 
-<document index="24">
+<document index="27">
 <source>package.toml</source>
 <document_content>
 # Package configuration
@@ -4030,7 +4038,7 @@ github_actions = true   # Add GitHub Actions workflows
 </document_content>
 </document>
 
-<document index="25">
+<document index="28">
 <source>pyproject.toml</source>
 <document_content>
 # this_file: pyproject.toml
@@ -4488,40 +4496,104 @@ ban-relative-imports = 'all' # Ban all relative imports for consistency
     'TID252'
     # Allow relative imports in tests for convenience
 ]
-
 </document_content>
 </document>
 
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/__init__.py
-# Language: python
+<document index="29">
+<source>src/htmladapt/__init__.py</source>
+<document_content>
+# this_file: src/htmladapt/__init__.py
+"""HTMLAdapt: Intelligent HTML Content Extraction and Merge Tool
+
+HTMLAdapt is a Python-based tool for bidirectional HTML document transformation
+that preserves structural integrity while enabling seamless content modification
+through an intermediate representation.
+"""
 
 from htmladapt.__version__ import __version__
 from htmladapt.config import ProcessingConfig
 from htmladapt.tool import HTMLExtractMergeTool
 
+__all__ = [
+    "HTMLExtractMergeTool",
+    "ProcessingConfig",
+    "__version__",
+]
+</document_content>
+</document>
 
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/__main__.py
-# Language: python
+<document index="30">
+<source>src/htmladapt/__main__.py</source>
+<document_content>
+#!/usr/bin/env python3
+# this_file: src/htmladapt/__main__.py
+"""HTMLAdapt CLI interface.
+
+Simple command-line interface for HTML content extraction and merging.
+"""
 
 import sys
 from pathlib import Path
+
 import fire
+
 from htmladapt import HTMLExtractMergeTool, ProcessingConfig
 from htmladapt.__version__ import __version__
 
+
 class HTMLAdaptCLI:
     """HTMLAdapt command-line interface."""
-    def version((self)) -> None:
+
+    def version(self) -> None:
         """Display version information."""
-    def extract((
+
+    def extract(
         self,
         full_path: str | Path,
         map_path: str | Path | None = None,
         comp_path: str | Path | None = None,
         id_prefix: str = "xhq",
-    )) -> None:
-        """Extract content from HTML file into map_path and subset documents."""
-    def merge((
+    ) -> None:
+        """Extract content from HTML file into map_path and subset documents.
+
+        Args:
+            full_path: Path to old_path HTML file
+            map_path: Path for 'map_path' map HTML new_path (optional)
+            comp_path: Path for comp HTML new_path (optional)
+            id_prefix: Prefix for generated IDs (default: "xhq")
+        """
+        full_path = Path(full_path)
+
+        if not full_path.exists():
+            sys.exit(1)
+
+        # Set default new_path paths if not provided
+        if map_path is None:
+            map_path = full_path.with_suffix(".m.html")
+        if comp_path is None:
+            comp_path = full_path.with_suffix(".c.html")
+
+        map_path = Path(map_path)
+        comp_path = Path(comp_path)
+
+        # Create configuration
+        config = ProcessingConfig(id_prefix=id_prefix)
+
+        # Initialize tool
+        tool = HTMLExtractMergeTool(config=config)
+
+        try:
+            html_content = full_path.read_text(encoding="utf-8")
+
+            map_html, comp_html = tool.extract(html_content)
+
+            map_path.write_text(map_html, encoding="utf-8")
+            comp_path.write_text(comp_html, encoding="utf-8")
+
+        except Exception:
+            sys.exit(1)
+
+    def merge(
         self,
         cnew_path: str | Path,
         Cold_path: str | Path,
@@ -4530,521 +4602,1676 @@ class HTMLAdaptCLI:
         new_path: str | Path | None = None,
         id_prefix: str = "xhq",
         simi_level: float = 0.7,
-    )) -> None:
-        """Merge edited content back into old_path HTML structure."""
+    ) -> None:
+        """Merge edited content back into old_path HTML structure.
 
-def version((self)) -> None:
-    """Display version information."""
+        Args:
+            cnew_path: Path to edited subset HTML file
+            cold_path: Path to old_path subset HTML file
+            map_path: Path to map_path HTML file
+            old_path: Path to old_path HTML file
+            new_path: Path for merged new_path (optional)
+            id_prefix: Prefix for generated IDs (default: "xhq")
+            simi_level: Minimum similarity for fuzzy matching (default: 0.7)
+        """
+        cnew_path = Path(cnew_path)
+        cold_path = Path(Cold_path)
+        map_path = Path(map_path)
+        old_path = Path(old_path)
 
-def extract((
-        self,
-        full_path: str | Path,
-        map_path: str | Path | None = None,
-        comp_path: str | Path | None = None,
-        id_prefix: str = "xhq",
-    )) -> None:
-    """Extract content from HTML file into map_path and subset documents."""
+        # Check all input files exist
+        for path in [cnew_path, cold_path, map_path, old_path]:
+            if not path.exists():
+                sys.exit(1)
 
-def merge((
-        self,
-        cnew_path: str | Path,
-        Cold_path: str | Path,
-        map_path: str | Path,
-        old_path: str | Path,
-        new_path: str | Path | None = None,
-        id_prefix: str = "xhq",
-        simi_level: float = 0.7,
-    )) -> None:
-    """Merge edited content back into old_path HTML structure."""
+        # Set default new_path path if not provided
+        if new_path is None:
+            new_path = old_path.with_suffix(".n.html")
+        new_path = Path(new_path)
 
-def main(()) -> None:
+        # Create configuration
+        config = ProcessingConfig(
+            id_prefix=id_prefix,
+            simi_level=simi_level,
+        )
+
+        # Initialize tool
+        tool = HTMLExtractMergeTool(config=config)
+
+        try:
+            cnew_html = cnew_path.read_text(encoding="utf-8")
+            cold_html = cold_path.read_text(encoding="utf-8")
+            map_html = map_path.read_text(encoding="utf-8")
+            old_html = old_path.read_text(encoding="utf-8")
+
+            new_html = tool.merge(cnew_html, cold_html, map_html, old_html)
+
+            new_path.write_text(new_html, encoding="utf-8")
+
+        except Exception:
+            sys.exit(1)
+
+
+def main() -> None:
     """Main CLI entry point."""
+    try:
+        fire.Fire(HTMLAdaptCLI)
+    except KeyboardInterrupt:
+        sys.exit(1)
+    except Exception:
+        sys.exit(1)
 
 
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/config.py
-# Language: python
+if __name__ == "__main__":
+    main()
+</document_content>
+</document>
+
+<document index="31">
+<source>src/htmladapt/config.py</source>
+<document_content>
+# this_file: src/htmladapt/config.py
+"""Configuration classes for HTMLAdapt processing."""
 
 from dataclasses import dataclass
 
+
+@dataclass
 class ProcessingConfig:
-    """Configuration settings for HTMLAdapt processing."""
-    def __post_init__((self)) -> None:
+    """Configuration settings for HTMLAdapt processing.
+
+    This class defines configurable parameters for HTML extraction,
+    matching, and merging operations.
+
+    Attributes:
+        id_prefix: Prefix for generated element IDs
+        simi_level: Minimum similarity score for fuzzy matching (0.0-1.0)
+    """
+
+    # ID generation settings
+    id_prefix: str = "xhq"
+
+    # Matching algorithm settings
+    simi_level: float = 0.7
+
+    def __post_init__(self) -> None:
         """Validate configuration values."""
+        # Validate threshold
+        if not 0.0 <= self.simi_level <= 1.0:
+            msg = "simi_level must be between 0.0 and 1.0"
+            raise ValueError(msg)
+</document_content>
+</document>
 
-def __post_init__((self)) -> None:
-    """Validate configuration values."""
-
-
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/id_generation.py
-# Language: python
+<document index="32">
+<source>src/htmladapt/id_generation.py</source>
+<document_content>
+# this_file: src/htmladapt/id_generation.py
+"""ID generation system for HTML elements."""
 
 import logging
 
+logger = logging.getLogger(__name__)
+
+
 class IDGenerator:
-    """Generates unique, collision-free IDs for HTML elements."""
-    def __init__((self, prefix: str = "xhq")) -> None:
-        """Initialize the ID generator."""
-    def generate_id((self, element_hint: str | None = None)) -> str:
-        """Generate a unique ID for an HTML element."""
-    def register_existing_id((self, existing_id: str)) -> None:
-        """Register an existing ID to avoid collisions."""
-    def is_generated_id((self, element_id: str)) -> bool:
-        """Check if an ID was generated by this generator."""
-    def reset((self)) -> None:
+    """Generates unique, collision-free IDs for HTML elements.
+
+    Uses base36 encoding for compact IDs with hierarchical numbering
+    for traceability and collision detection.
+    """
+
+    def __init__(self, prefix: str = "xhq") -> None:
+        """Initialize the ID generator.
+
+        Args:
+            prefix: Prefix for generated IDs
+        """
+        self.prefix = prefix
+        self._counter = 0
+        self._used_ids: set[str] = set()
+
+    def generate_id(self, element_hint: str | None = None) -> str:
+        """Generate a unique ID for an HTML element.
+
+        Args:
+            element_hint: Optional hint about the element type for debugging
+
+        Returns:
+            Unique element ID
+        """
+        while True:
+            # Convert counter to base36 for compact representation
+            base36_counter = self._to_base36(self._counter)
+
+            if element_hint:
+                # Include element hint for better traceability
+                candidate_id = f"{self.prefix}{element_hint}_{base36_counter}"
+            else:
+                candidate_id = f"{self.prefix}{base36_counter}"
+
+            self._counter += 1
+
+            # Check for collisions
+            if candidate_id not in self._used_ids:
+                self._used_ids.add(candidate_id)
+                logger.debug(f"Generated ID: {candidate_id}")
+                return candidate_id
+
+            # Continue to next counter value if collision detected
+            logger.debug(f"ID collision detected: {candidate_id}")
+
+    def register_existing_id(self, existing_id: str) -> None:
+        """Register an existing ID to avoid collisions.
+
+        Args:
+            existing_id: ID that already exists in the document
+        """
+        self._used_ids.add(existing_id)
+        logger.debug(f"Registered existing ID: {existing_id}")
+
+    def is_generated_id(self, element_id: str) -> bool:
+        """Check if an ID was generated by this generator.
+
+        Args:
+            element_id: ID to check
+
+        Returns:
+            True if ID was generated by this generator
+        """
+        return element_id.startswith(self.prefix)
+
+    def reset(self) -> None:
         """Reset the generator state."""
-    def _to_base36((self, num: int)) -> str:
-        """Convert integer to base36 string."""
+        self._counter = 0
+        self._used_ids.clear()
+        logger.debug("ID generator reset")
 
-def __init__((self, prefix: str = "xhq")) -> None:
-    """Initialize the ID generator."""
+    def _to_base36(self, num: int) -> str:
+        """Convert integer to base36 string.
 
-def generate_id((self, element_hint: str | None = None)) -> str:
-    """Generate a unique ID for an HTML element."""
+        Args:
+            num: Integer to convert
 
-def register_existing_id((self, existing_id: str)) -> None:
-    """Register an existing ID to avoid collisions."""
+        Returns:
+            Base36 string representation
+        """
+        if num == 0:
+            return "0"
 
-def is_generated_id((self, element_id: str)) -> bool:
-    """Check if an ID was generated by this generator."""
+        digits = "0123456789abcdefghijklmnopqrstuvwxyz"
+        result = ""
 
-def reset((self)) -> None:
-    """Reset the generator state."""
+        while num > 0:
+            result = digits[num % 36] + result
+            num //= 36
 
-def _to_base36((self, num: int)) -> str:
-    """Convert integer to base36 string."""
+        return result
 
-def stats((self)) -> dict[str, int]:
-    """Get generator statistics."""
+    @property
+    def stats(self) -> dict[str, int]:
+        """Get generator statistics.
 
+        Returns:
+            Dictionary with generation statistics
+        """
+        return {
+            "counter": self._counter,
+            "used_ids_count": len(self._used_ids),
+        }
+</document_content>
+</document>
 
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/matcher.py
-# Language: python
+<document index="33">
+<source>src/htmladapt/matcher.py</source>
+<document_content>
+# this_file: src/htmladapt/matcher.py
+"""Element matching algorithms for content reconciliation."""
 
 import hashlib
 import logging
+
 from bs4 import NavigableString, Tag
-from rapidfuzz import fuzz
-import xxhash
+
+try:
+    from rapidfuzz import fuzz
+except ImportError:
+    fuzz = None
+
+try:
+    import xxhash
+except ImportError:
+    xxhash = None
+
+logger = logging.getLogger(__name__)
+
 
 class ElementMatcher:
-    """Multi-strategy element matching for HTML reconciliation."""
-    def __init__((self, simi_level: float = 0.7)) -> None:
-        """Initialize the element matcher."""
-    def match_elements((
+    """Multi-strategy element matching for HTML reconciliation.
+
+    Implements perfect ID matching, hash-based matching, and fuzzy matching
+    with configurable similarity thresholds.
+    """
+
+    def __init__(self, simi_level: float = 0.7) -> None:
+        """Initialize the element matcher.
+
+        Args:
+            simi_level: Minimum similarity score for fuzzy matching
+        """
+        self.simi_level = simi_level
+        self._content_cache: dict[str, str] = {}
+
+    def match_elements(
         self, edited_elements: list[Tag], original_elements: list[Tag]
-    )) -> list[tuple[Tag | None, Tag | None, float]]:
-        """Match edited elements with original elements."""
-    def _calculate_similarity((self, elem1: Tag, elem2: Tag)) -> float:
-        """Calculate similarity score between two elements."""
-    def _id_similarity((self, elem1: Tag, elem2: Tag)) -> float:
-        """Calculate ID-based similarity."""
-    def _hash_similarity((self, elem1: Tag, elem2: Tag)) -> float:
-        """Calculate hash-based content similarity."""
-    def _text_similarity((self, elem1: Tag, elem2: Tag)) -> float:
-        """Calculate text-based fuzzy similarity."""
-    def _simple_text_similarity((self, elem1: Tag, elem2: Tag)) -> float:
-        """Simple text similarity fallback when rapidfuzz is not available."""
-    def _get_content_hash((self, element: Tag)) -> str:
-        """Generate content hash for an element."""
-    def _get_element_text((self, element: Tag)) -> str:
-        """Extract normalized text content from element."""
-    def clear_cache((self)) -> None:
+    ) -> list[tuple[Tag | None, Tag | None, float]]:
+        """Match edited elements with original elements.
+
+        Args:
+            edited_elements: Elements from edited document
+            original_elements: Elements from original document
+
+        Returns:
+            List of tuples: (edited_element, original_element, confidence_score)
+            None values indicate unmatched elements
+        """
+        matches = []
+        used_old_pacompal_indices = set()
+
+        for edited_elem in edited_elements:
+            best_match = None
+            best_score = 0.0
+            best_old_pacompal_idx = -1
+
+            for idx, original_elem in enumerate(original_elements):
+                if idx in used_old_pacompal_indices:
+                    continue
+
+                score = self._calculate_similarity(edited_elem, original_elem)
+
+                if score > best_score and score >= self.simi_level:
+                    best_match = original_elem
+                    best_score = score
+                    best_old_pacompal_idx = idx
+
+            if best_match is not None:
+                matches.append((edited_elem, best_match, best_score))
+                used_old_pacompal_indices.add(best_old_pacompal_idx)
+            else:
+                matches.append((edited_elem, None, 0.0))
+
+        # Add unmatched original elements
+        for idx, original_elem in enumerate(original_elements):
+            if idx not in used_old_pacompal_indices:
+                matches.append((None, original_elem, 0.0))
+
+        return matches
+
+    def _calculate_similarity(self, elem1: Tag, elem2: Tag) -> float:
+        """Calculate similarity score between two elements.
+
+        Args:
+            elem1: First element
+            elem2: Second element
+
+        Returns:
+            Similarity score between 0.0 and 1.0
+        """
+        # 1. Perfect ID match (highest priority)
+        if self._id_similarity(elem1, elem2) == 1.0:
+            return 1.0
+
+        # 2. Hash-based content match
+        if self._hash_similarity(elem1, elem2) == 1.0:
+            return 0.95
+
+        # 3. Fuzzy text similarity
+        return self._text_similarity(elem1, elem2)
+
+    def _id_similarity(self, elem1: Tag, elem2: Tag) -> float:
+        """Calculate ID-based similarity.
+
+        Args:
+            elem1: First element
+            elem2: Second element
+
+        Returns:
+            1.0 if IDs match exactly, 0.0 otherwise
+        """
+        id1 = elem1.get("id")
+        id2 = elem2.get("id")
+
+        if id1 and id2 and id1 == id2:
+            return 1.0
+
+        return 0.0
+
+    def _hash_similarity(self, elem1: Tag, elem2: Tag) -> float:
+        """Calculate hash-based content similarity.
+
+        Args:
+            elem1: First element
+            elem2: Second element
+
+        Returns:
+            1.0 if content hashes match, 0.0 otherwise
+        """
+        hash1 = self._get_content_hash(elem1)
+        hash2 = self._get_content_hash(elem2)
+
+        return 1.0 if hash1 == hash2 else 0.0
+
+    def _text_similarity(self, elem1: Tag, elem2: Tag) -> float:
+        """Calculate text-based fuzzy similarity.
+
+        Args:
+            elem1: First element
+            elem2: Second element
+
+        Returns:
+            Fuzzy similarity score between 0.0 and 1.0
+        """
+        if fuzz is None:
+            logger.warning("rapidfuzz not available, using simple text matching")
+            return self._simple_text_similarity(elem1, elem2)
+
+        text1 = self._get_element_text(elem1)
+        text2 = self._get_element_text(elem2)
+
+        if not text1 or not text2:
+            return 0.0
+
+        # Use rapidfuzz for accurate fuzzy matching
+        return fuzz.ratio(text1, text2) / 100.0
+
+    def _simple_text_similarity(self, elem1: Tag, elem2: Tag) -> float:
+        """Simple text similarity fallback when rapidfuzz is not available.
+
+        Args:
+            elem1: First element
+            elem2: Second element
+
+        Returns:
+            Simple similarity score
+        """
+        text1 = self._get_element_text(elem1)
+        text2 = self._get_element_text(elem2)
+
+        if text1 == text2:
+            return 1.0
+        if text1 and text2:
+            # Simple Jaccard similarity on words
+            words1 = set(text1.lower().split())
+            words2 = set(text2.lower().split())
+
+            if not words1 and not words2:
+                return 1.0
+
+            intersection = words1 & words2
+            union = words1 | words2
+
+            return len(intersection) / len(union) if union else 0.0
+
+        return 0.0
+
+    def _get_content_hash(self, element: Tag) -> str:
+        """Generate content hash for an element.
+
+        Args:
+            element: Element to hash
+
+        Returns:
+            Content hash string
+        """
+        element_id = id(element)
+        if element_id in self._content_cache:
+            return self._content_cache[element_id]
+
+        # Get normalized content for hashing
+        content = self._get_element_text(element)
+        tag_info = f"{element.name}:{element.attrs}"
+        hash_input = f"{tag_info}|{content}".encode()
+
+        content_hash = xxhash.xxh64(hash_input).hexdigest() if xxhash else hashlib.sha256(hash_input).hexdigest()[:16]
+
+        self._content_cache[element_id] = content_hash
+        return content_hash
+
+    def _get_element_text(self, element: Tag) -> str:
+        """Extract normalized text content from element.
+
+        Args:
+            element: Element to extract text from
+
+        Returns:
+            Normalized text content
+        """
+        text = element.get_text(separator=" ", strip=True) if hasattr(element, "get_text") else str(element).strip()
+
+        # Normalize whitespace
+        return " ".join(text.split())
+
+    def clear_cache(self) -> None:
         """Clear the content cache."""
+        self._content_cache.clear()
+</document_content>
+</document>
 
-def __init__((self, simi_level: float = 0.7)) -> None:
-    """Initialize the element matcher."""
-
-def match_elements((
-        self, edited_elements: list[Tag], original_elements: list[Tag]
-    )) -> list[tuple[Tag | None, Tag | None, float]]:
-    """Match edited elements with original elements."""
-
-def _calculate_similarity((self, elem1: Tag, elem2: Tag)) -> float:
-    """Calculate similarity score between two elements."""
-
-def _id_similarity((self, elem1: Tag, elem2: Tag)) -> float:
-    """Calculate ID-based similarity."""
-
-def _hash_similarity((self, elem1: Tag, elem2: Tag)) -> float:
-    """Calculate hash-based content similarity."""
-
-def _text_similarity((self, elem1: Tag, elem2: Tag)) -> float:
-    """Calculate text-based fuzzy similarity."""
-
-def _simple_text_similarity((self, elem1: Tag, elem2: Tag)) -> float:
-    """Simple text similarity fallback when rapidfuzz is not available."""
-
-def _get_content_hash((self, element: Tag)) -> str:
-    """Generate content hash for an element."""
-
-def _get_element_text((self, element: Tag)) -> str:
-    """Extract normalized text content from element."""
-
-def clear_cache((self)) -> None:
-    """Clear the content cache."""
-
-
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/parser.py
-# Language: python
+<document index="34">
+<source>src/htmladapt/parser.py</source>
+<document_content>
+# this_file: src/htmladapt/parser.py
+"""HTML parsing with multiple backend support and fallback mechanisms."""
 
 import logging
+
 from bs4 import BeautifulSoup
+
+logger = logging.getLogger(__name__)
+
 
 class HTMLParser:
     """Simple HTML parser with automatic fallback."""
-    def __init__((self)) -> None:
+
+    def __init__(self) -> None:
         """Initialize the parser."""
-    def parse((self, content: str | bytes, encoding: str | None = None)) -> BeautifulSoup:
-        """Parse HTML content using the first available parser."""
-    def clone_soup((self, soup: BeautifulSoup)) -> BeautifulSoup:
+        self._preferred_parsers = ["lxml", "html5lib", "html.parser"]
+
+    def parse(self, content: str | bytes, encoding: str | None = None) -> BeautifulSoup:
+        """Parse HTML content using the first available parser.
+
+        Args:
+            content: HTML content to parse
+            encoding: Character encoding to use for bytes content
+
+        Returns:
+            BeautifulSoup: Parsed HTML tree
+
+        Raises:
+            ValueError: If all parsing attempts fail
+        """
+        if isinstance(content, bytes):
+            content = content.decode(encoding) if encoding else content.decode("utf-8", errors="replace")
+
+        for parser_name in self._preferred_parsers:
+            try:
+                soup = BeautifulSoup(content, parser_name)
+                soup._htmladapt_parser = parser_name
+                return soup
+            except Exception:
+                continue
+
+        # Fallback to basic parser
+        soup = BeautifulSoup(content, "html.parser")
+        soup._htmladapt_parser = "html.parser"
+        return soup
+
+    def clone_soup(self, soup: BeautifulSoup) -> BeautifulSoup:
         """Clone a soup object using the same parser that created it."""
+        parser_name = getattr(soup, "_htmladapt_parser", "html.parser")
+        clone = BeautifulSoup(str(soup), parser_name)
+        clone._htmladapt_parser = parser_name
+        return clone
+</document_content>
+</document>
 
-def __init__((self)) -> None:
-    """Initialize the parser."""
-
-def parse((self, content: str | bytes, encoding: str | None = None)) -> BeautifulSoup:
-    """Parse HTML content using the first available parser."""
-
-def clone_soup((self, soup: BeautifulSoup)) -> BeautifulSoup:
-    """Clone a soup object using the same parser that created it."""
-
-
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/src/htmladapt/tool.py
-# Language: python
+<document index="35">
+<source>src/htmladapt/tool.py</source>
+<document_content>
+# this_file: src/htmladapt/tool.py
+"""Main HTMLExtractMergeTool implementation for extraction and merging."""
 
 import logging
+
 from bs4 import BeautifulSoup, Tag
+
 from htmladapt.config import ProcessingConfig
 from htmladapt.id_generation import IDGenerator
 from htmladapt.matcher import ElementMatcher
 from htmladapt.parser import HTMLParser
 
+logger = logging.getLogger(__name__)
+
+
 class HTMLExtractMergeTool:
-    """Main tool for HTML content extraction and merging."""
-    def __init__((self, config: ProcessingConfig | None = None)) -> None:
-        """Initialize the HTMLExtractMergeTool."""
-    def extract((self, html: str)) -> tuple[str, str]:
-        """Extract content from HTML document."""
-    def merge((self, cnew_path: str, cold_path: str, superset: str, original: str)) -> str:
-        """Merge edited content back into the original structure."""
-    def _register_existing_ids((self, soup: BeautifulSoup)) -> None:
-        """Register existing element IDs to avoid collisions."""
-    def _create_superset((self, soup: BeautifulSoup)) -> BeautifulSoup:
-        """Create superset document by adding IDs to text-containing elements."""
-    def _create_subset((self, full_soup: BeautifulSoup)) -> BeautifulSoup:
-        """Create subset document with only translatable content."""
-    def _is_text_containing_element((self, element: Tag)) -> bool:
-        """Check if element contains translatable text."""
-    def _is_translatable_element((self, element: Tag)) -> bool:
-        """Check if element should be included in subset for translation."""
-    def _extract_text_content((self, element: Tag)) -> str:
-        """Extract direct text content from element."""
-    def _match_comp_elements((self, edited_soup: BeautifulSoup, original_comp_soup: BeautifulSoup)) -> list:
-        """Match elements between edited and original subset documents."""
-    def _apply_changes_to_superset((self, matches: list, full_soup: BeautifulSoup)) -> BeautifulSoup:
-        """Apply matched changes to the superset document."""
-    def _cleanup_generated_ids((self, soup: BeautifulSoup)) -> BeautifulSoup:
-        """Remove generated IDs from the final document."""
+    """Main tool for HTML content extraction and merging.
 
-def __init__((self, config: ProcessingConfig | None = None)) -> None:
-    """Initialize the HTMLExtractMergeTool."""
+    Provides bidirectional HTML document transformation that preserves
+    structural integrity while enabling seamless content modification.
+    """
 
-def extract((self, html: str)) -> tuple[str, str]:
-    """Extract content from HTML document."""
+    def __init__(self, config: ProcessingConfig | None = None) -> None:
+        """Initialize the HTMLExtractMergeTool.
 
-def merge((self, cnew_path: str, cold_path: str, superset: str, original: str)) -> str:
-    """Merge edited content back into the original structure."""
+        Args:
+            config: Processing configuration
+        """
+        self.config = config or ProcessingConfig()
 
-def _register_existing_ids((self, soup: BeautifulSoup)) -> None:
-    """Register existing element IDs to avoid collisions."""
+        # Initialize components
+        self.parser = HTMLParser()
+        self.id_generator = IDGenerator(self.config.id_prefix)
+        self.element_matcher = ElementMatcher(self.config.simi_level)
 
-def _create_superset((self, soup: BeautifulSoup)) -> BeautifulSoup:
-    """Create superset document by adding IDs to text-containing elements."""
+        logger.info("Initialized HTMLExtractMergeTool")
 
-def _create_subset((self, full_soup: BeautifulSoup)) -> BeautifulSoup:
-    """Create subset document with only translatable content."""
+    def extract(self, html: str) -> tuple[str, str]:
+        """Extract content from HTML document.
 
-def _is_text_containing_element((self, element: Tag)) -> bool:
-    """Check if element contains translatable text."""
+        Creates both a superset document (original with IDs) and subset document
+        (translatable content only) for later merging.
 
-def _is_translatable_element((self, element: Tag)) -> bool:
-    """Check if element should be included in subset for translation."""
+        Args:
+            html: Original HTML content
 
-def _extract_text_content((self, element: Tag)) -> str:
-    """Extract direct text content from element."""
+        Returns:
+            Tuple of (map_html, comp_html)
+        """
+        logger.info("Starting HTML extraction process")
 
-def _match_comp_elements((self, edited_soup: BeautifulSoup, original_comp_soup: BeautifulSoup)) -> list:
-    """Match elements between edited and original subset documents."""
+        try:
+            # Parse the original HTML
+            original_soup = self.parser.parse(html)
 
-def _apply_changes_to_superset((self, matches: list, full_soup: BeautifulSoup)) -> BeautifulSoup:
-    """Apply matched changes to the superset document."""
+            # Register existing IDs to avoid collisions
+            self._register_existing_ids(original_soup)
 
-def _cleanup_generated_ids((self, soup: BeautifulSoup)) -> BeautifulSoup:
-    """Remove generated IDs from the final document."""
+            # Create superset: original HTML with added IDs
+            full_soup = self._create_superset(original_soup)
 
-def stats((self)) -> dict:
-    """Get processing statistics."""
+            # Create subset: translatable content only
+            comp_soup = self._create_subset(full_soup)
 
+            map_html = str(full_soup)
+            comp_html = str(comp_soup)
 
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/tests/test_config.py
-# Language: python
+            logger.info(f"Extraction complete. Superset: {len(map_html)} chars, Subset: {len(comp_html)} chars")
+
+            return map_html, comp_html
+
+        except ValueError as error:
+            logger.error("Extraction failed: %s", error)
+            raise
+
+    def merge(self, cnew_path: str, cold_path: str, superset: str, original: str) -> str:
+        """Merge edited content back into the original structure.
+
+        Args:
+            cnew_path: Edited subset content
+            cold_path: Original subset for comparison
+            superset: Original with IDs (superset document)
+            original: Original HTML document
+
+        Returns:
+            Final merged HTML document
+        """
+        logger.info("Starting HTML merge process")
+
+        try:
+            # Parse all inputs
+            edited_soup = self.parser.parse(cnew_path)
+            original_comp_soup = self.parser.parse(cold_path)
+            full_soup = self.parser.parse(superset)
+            self.parser.parse(original)
+
+            # Match elements between edited and original subsets
+            matches = self._match_comp_elements(edited_soup, original_comp_soup)
+
+            # Apply changes to superset
+            merged_soup = self._apply_changes_to_superset(matches, full_soup)
+
+            # Clean up generated IDs (optional, based on config)
+            final_soup = self._cleanup_generated_ids(merged_soup)
+
+            result_html = str(final_soup)
+
+            logger.info(f"Merge complete. Result: {len(result_html)} chars")
+
+            return result_html
+
+        except ValueError as error:
+            logger.error("Merge failed: %s", error)
+            raise
+
+    def _register_existing_ids(self, soup: BeautifulSoup) -> None:
+        """Register existing element IDs to avoid collisions.
+
+        Args:
+            soup: Parsed HTML document
+        """
+        for element in soup.find_all(attrs={"id": True}):
+            self.id_generator.register_existing_id(element["id"])
+
+    def _create_superset(self, soup: BeautifulSoup) -> BeautifulSoup:
+        """Create superset document by adding IDs to text-containing elements.
+
+        Args:
+            soup: Original parsed document
+
+        Returns:
+            Superset document with IDs
+        """
+        # Make a copy to avoid modifying the original
+        full_soup = self.parser.clone_soup(soup)
+
+        for element in full_soup.find_all():
+            if self._is_text_containing_element(element):
+                if not element.get("id"):
+                    element["id"] = self.id_generator.generate_id(element.name)
+
+        return full_soup
+
+    def _create_subset(self, full_soup: BeautifulSoup) -> BeautifulSoup:
+        """Create subset document with only translatable content.
+
+        Args:
+            full_soup: Superset document with IDs
+
+        Returns:
+            Subset document with translatable content
+        """
+        # Start with minimal HTML structure
+        parser_name = getattr(full_soup, "_htmladapt_parser", "html.parser")
+        comp_soup = BeautifulSoup("<html><body></body></html>", parser_name)
+        comp_soup._htmladapt_parser = parser_name
+        body = comp_soup.body
+
+        for element in full_soup.find_all():
+            if self._is_translatable_element(element):
+                # Create a copy of the element with its ID
+                new_elem = comp_soup.new_tag(element.name)
+                if element.get("id"):
+                    new_elem["id"] = element["id"]
+
+                # Add text content
+                text_content = self._extract_text_content(element)
+                if text_content:
+                    new_elem.string = text_content
+
+                body.append(new_elem)
+
+        return comp_soup
+
+    def _is_text_containing_element(self, element: Tag) -> bool:
+        """Check if element contains translatable text.
+
+        Args:
+            element: Element to check
+
+        Returns:
+            True if element contains text content
+        """
+        if not isinstance(element, Tag):
+            return False
+
+        # Skip script, style, and other non-translatable elements
+        if element.name in ["script", "style", "meta", "link", "head", "title"]:
+            return False
+
+        # Check if element has direct text content (not just child element text)
+        direct_text = ""
+        for content in element.contents:
+            if hasattr(content, "strip") and callable(getattr(content, "strip", None)):
+                text = content.strip()
+                if text:
+                    direct_text += text
+
+        return bool(direct_text)
+
+    def _is_translatable_element(self, element: Tag) -> bool:
+        """Check if element should be included in subset for translation.
+
+        Args:
+            element: Element to check
+
+        Returns:
+            True if element should be translated
+        """
+        return self._is_text_containing_element(element)
+
+    def _extract_text_content(self, element: Tag) -> str:
+        """Extract direct text content from element.
+
+        Args:
+            element: Element to extract text from
+
+        Returns:
+            Direct text content
+        """
+        if hasattr(element, "get_text"):
+            # Get text from immediate children only, not nested elements
+            texts = []
+            for content in element.contents:
+                if hasattr(content, "strip") and callable(getattr(content, "strip", None)):  # NavigableString
+                    text = content.strip()
+                    if text:
+                        texts.append(text)
+                elif hasattr(content, "get_text"):  # Tag
+                    text = content.get_text(separator=" ", strip=True)
+                    if text:
+                        texts.append(text)
+            return " ".join(texts)
+        return str(element).strip()
+
+    def _match_comp_elements(self, edited_soup: BeautifulSoup, original_comp_soup: BeautifulSoup) -> list:
+        """Match elements between edited and original subset documents.
+
+        Args:
+            edited_soup: Edited subset document
+            original_comp_soup: Original subset document
+
+        Returns:
+            List of element matches
+        """
+        edited_elements = list(edited_soup.find_all())
+        original_elements = list(original_comp_soup.find_all())
+
+        return self.element_matcher.match_elements(edited_elements, original_elements)
+
+    def _apply_changes_to_superset(self, matches: list, full_soup: BeautifulSoup) -> BeautifulSoup:
+        """Apply matched changes to the superset document.
+
+        Args:
+            matches: Element matches from subset comparison
+            full_soup: Superset document to modify
+
+        Returns:
+            Modified superset document
+        """
+        match_by_id: dict[str, tuple[Tag | None, Tag | None, float]] = {}
+
+        for edited_elem, original_elem, confidence in matches:
+            lookup_id = None
+            if original_elem and original_elem.get("id"):
+                lookup_id = original_elem["id"]
+            elif edited_elem and edited_elem.get("id"):
+                lookup_id = edited_elem["id"]
+
+            if lookup_id:
+                match_by_id[lookup_id] = (edited_elem, original_elem, confidence)
+
+        for edited_elem, original_elem, confidence in matches:
+            if edited_elem and original_elem and confidence >= self.config.simi_level:
+                # Find corresponding element in superset by ID
+                element_id = original_elem.get("id")
+                if element_id:
+                    full_elem = full_soup.find(attrs={"id": element_id})
+                    if full_elem:
+                        # Update text content while preserving structure and attributes
+                        new_text = self._extract_text_content(edited_elem)
+
+                        # Preserve existing attributes and structure
+                        # Replace only the text content, not the entire element
+                        if new_text:
+                            # Remove child elements that were dropped or whose text is no longer referenced.
+                            if isinstance(full_elem, Tag):
+                                for child in list(full_elem.find_all(recursive=False)):
+                                    if isinstance(child, Tag) and child.get("id"):
+                                        child_id = child["id"]
+                                        child_match = match_by_id.get(child_id)
+                                        child_old_pacompal_text = self._extract_text_content(child)
+                                        child_text_lower = (
+                                            child_old_pacompal_text.lower() if child_old_pacompal_text else ""
+                                        )
+
+                                        edited_child = child_match[0] if child_match else None
+
+                                        child_removed_in_subset = edited_child is None
+                                        child_changed = (
+                                            edited_child is not None
+                                            and self._extract_text_content(edited_child) != child_old_pacompal_text
+                                        )
+
+                                        # Drop unchanged children whose original text is absent from the new parent text.
+                                        if child_removed_in_subset:
+                                            child.decompose()
+                                            continue
+
+                                        if (
+                                            not child_changed
+                                            and child_text_lower
+                                            and child_text_lower not in new_text.lower()
+                                        ):
+                                            child.decompose()
+                                            continue
+
+                            # Clear only text content, keep child elements
+                            for content in list(full_elem.contents):
+                                if hasattr(content, "strip") and callable(
+                                    getattr(content, "strip", None)
+                                ):  # It's a NavigableString
+                                    content.extract()
+
+                            # Add new text at the beginning
+                            if full_elem.contents:
+                                full_elem.insert(0, new_text)
+                            else:
+                                full_elem.string = new_text
+
+        return full_soup
+
+    def _cleanup_generated_ids(self, soup: BeautifulSoup) -> BeautifulSoup:
+        """Remove generated IDs from the final document.
+
+        Args:
+            soup: Document to clean up
+
+        Returns:
+            Document with generated IDs removed
+        """
+        for element in soup.find_all(attrs={"id": True}):
+            if self.id_generator.is_generated_id(element["id"]):
+                del element["id"]
+
+        return soup
+
+    @property
+    def stats(self) -> dict:
+        """Get processing statistics.
+
+        Returns:
+            Dictionary with processing statistics
+        """
+        return {
+            "id_generator_stats": self.id_generator.stats,
+            "simi_level": self.config.simi_level,
+        }
+</document_content>
+</document>
+
+<document index="36">
+<source>tests/test_config.py</source>
+<document_content>
+# this_file: tests/test_config.py
+"""Tests for ProcessingConfig class."""
 
 import pytest
+
 from htmladapt.config import ProcessingConfig
+
 
 class TestProcessingConfig:
     """Test ProcessingConfig functionality."""
-    def test_default_config((self)):
+
+    def test_default_config(self):
         """Test default configuration values."""
-    def test_custom_config((self)):
+        config = ProcessingConfig()
+
+        assert config.id_prefix == "xhq"
+        assert config.simi_level == 0.7
+
+    def test_custom_config(self):
         """Test custom configuration values."""
-    def test_simi_level_validation((self)):
+        config = ProcessingConfig(
+            id_prefix="test_",
+            simi_level=0.8,
+        )
+
+        assert config.id_prefix == "test_"
+        assert config.simi_level == 0.8
+
+    def test_simi_level_validation(self):
         """Test similarity threshold validation."""
+        # Valid thresholds
+        ProcessingConfig(simi_level=0.0)
+        ProcessingConfig(simi_level=1.0)
+        ProcessingConfig(simi_level=0.5)
 
-def test_default_config((self)):
-    """Test default configuration values."""
+        # Invalid thresholds
+        with pytest.raises(ValueError, match="simi_level must be between 0.0 and 1.0"):
+            ProcessingConfig(simi_level=-0.1)
 
-def test_custom_config((self)):
-    """Test custom configuration values."""
+        with pytest.raises(ValueError, match="simi_level must be between 0.0 and 1.0"):
+            ProcessingConfig(simi_level=1.1)
+</document_content>
+</document>
 
-def test_simi_level_validation((self)):
-    """Test similarity threshold validation."""
-
-
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/tests/test_extractor_merger.py
-# Language: python
+<document index="37">
+<source>tests/test_extractor_merger.py</source>
+<document_content>
+# this_file: tests/test_extractor_merger.py
+"""Tests for HTMLExtractMergeTool class."""
 
 import pytest
+
 from htmladapt.config import ProcessingConfig
 from htmladapt.tool import HTMLExtractMergeTool
-from bs4 import BeautifulSoup
+
 
 class TestHTMLExtractMergeTool:
     """Test HTMLExtractMergeTool functionality."""
-    def setup_method((self)):
+
+    def setup_method(self):
         """Set up test fixtures."""
-    def test_basic_extraction((self)):
+        self.tool = HTMLExtractMergeTool()
+
+    def test_basic_extraction(self):
         """Test basic HTML extraction."""
-    def test_extraction_with_existing_ids((self)):
+        html = """
+        <html>
+            <head><title>Test Document</title></head>
+            <body>
+                <h1>Main Title</h1>
+                <p>First paragraph with text.</p>
+                <p>Second paragraph with more text.</p>
+            </body>
+        </html>
+        """
+
+        superset, subset = self.tool.extract(html)
+
+        # Check that superset contains IDs
+        assert "xhq" in superset  # Generated IDs should be present
+
+        # Check that subset contains translatable content
+        assert "Main Title" in subset
+        assert "First paragraph" in subset
+        assert "Second paragraph" in subset
+
+    def test_extraction_with_existing_ids(self):
         """Test extraction preserving existing IDs."""
-    def test_basic_merge((self)):
+        html = """
+        <html>
+            <body>
+                <p id="existing">Paragraph with existing ID.</p>
+                <p>Paragraph without ID.</p>
+            </body>
+        </html>
+        """
+
+        superset, subset = self.tool.extract(html)
+
+        # Existing ID should be preserved
+        assert 'id="existing"' in superset
+        assert 'id="existing"' in subset
+
+        # New ID should be generated for paragraph without ID
+        assert "xhq" in superset
+
+    def test_basic_merge(self):
         """Test basic HTML merge operation."""
-    def test_complex_html_extraction((self)):
+        original_html = """
+        <html>
+            <body>
+                <p>Original text.</p>
+            </body>
+        </html>
+        """
+
+        # Extract
+        superset, subset = self.tool.extract(original_html)
+
+        # Edit (simulate translation)
+        cnew_path = subset.replace("Original text", "Edited text")
+
+        # Merge
+        result = self.tool.merge(cnew_path, subset, superset, original_html)
+
+        # Check result
+        assert "Edited text" in result
+        assert "Original text" not in result
+
+    def test_complex_html_extraction(self):
         """Test extraction with complex HTML structure."""
-    def test_empty_html_handling((self)):
+        html = """
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <title>Complex Document</title>
+                <style>body { margin: 0; }</style>
+                <script>console.log('test');</script>
+            </head>
+            <body>
+                <header>
+                    <nav>
+                        <a href="/">Home</a>
+                        <a href="/about">About</a>
+                    </nav>
+                </header>
+                <main>
+                    <article>
+                        <h1>Article Title</h1>
+                        <p>Article content goes here.</p>
+                        <blockquote>This is a quote.</blockquote>
+                    </article>
+                </main>
+                <footer>
+                    <p>&copy; 2024 Test Company</p>
+                </footer>
+            </body>
+        </html>
+        """
+
+        superset, subset = self.tool.extract(html)
+
+        # Should preserve structure
+        assert "<html>" in superset
+        assert "<head>" in superset
+        assert "<style>" in superset  # Non-translatable content preserved
+        assert "<script>" in superset  # Non-translatable content preserved
+
+        # Subset should contain only translatable text
+        assert "Home" in subset
+        assert "About" in subset
+        assert "Article Title" in subset
+        assert "Article content" in subset
+        assert "This is a quote" in subset
+
+    def test_empty_html_handling(self):
         """Test handling of empty or minimal HTML."""
-    def test_stats_functionality((self)):
+        empty_html = ""
+        minimal_html = "<html></html>"
+
+        # Should not crash on empty HTML
+        try:
+            superset1, subset1 = self.tool.extract(empty_html)
+            superset2, subset2 = self.tool.extract(minimal_html)
+
+            # Basic validation
+            assert isinstance(superset1, str)
+            assert isinstance(subset1, str)
+            assert isinstance(superset2, str)
+            assert isinstance(subset2, str)
+
+        except Exception as e:
+            pytest.fail(f"Empty HTML handling failed: {e}")
+
+    def test_stats_functionality(self):
         """Test statistics functionality."""
-    def test_custom_config((self)):
+        stats = self.tool.stats
+
+        assert isinstance(stats, dict)
+        assert "simi_level" in stats
+        assert "id_generator_stats" in stats
+
+    def test_custom_config(self):
         """Test tool with custom configuration."""
-    def test_text_containing_element_detection((self)):
+        config = ProcessingConfig(id_prefix="custom_", simi_level=0.9)
+
+        tool = HTMLExtractMergeTool(config=config)
+        html = "<html><body><p>Test text</p></body></html>"
+
+        superset, _subset = tool.extract(html)
+
+        # Should use custom prefix
+        assert "custom_" in superset
+
+    def test_text_containing_element_detection(self):
         """Test detection of text-containing elements."""
-    def test_merge_with_no_changes((self)):
+        html = """
+        <html>
+            <body>
+                <p>Text paragraph</p>
+                <div></div>
+                <span>Text span</span>
+                <script>console.log('not text');</script>
+                <style>body { color: red; }</style>
+            </body>
+        </html>
+        """
+
+        _superset, subset = self.tool.extract(html)
+
+        # Text-containing elements should be in subset
+        assert "Text paragraph" in subset
+        assert "Text span" in subset
+
+        # Non-text elements should not be in subset
+        assert "console.log" not in subset
+        assert "color: red" not in subset
+
+    def test_merge_with_no_changes(self):
         """Test merge when no changes were made."""
-    def test_element_text_extraction((self)):
+        html = "<html><body><p>Unchanged text</p></body></html>"
+
+        superset, subset = self.tool.extract(html)
+        result = self.tool.merge(subset, subset, superset, html)
+
+        # Should be essentially the same as original
+        assert "Unchanged text" in result
+
+    def test_element_text_extraction(self):
         """Test internal text extraction functionality."""
-    def test_merge_when_inline_markup_removed_then_insert_plain_text((self)):
+        from bs4 import BeautifulSoup
+
+        html = "<p>Simple <strong>bold</strong> text with <em>emphasis</em>.</p>"
+        soup = BeautifulSoup(html, "html.parser")
+        p_tag = soup.find("p")
+
+        text = self.tool._extract_text_content(p_tag)
+        # Check that the essential text is present (allowing for spacing differences)
+        assert "Simple" in text
+        assert "bold" in text
+        assert "text" in text
+        assert "emphasis" in text
+
+    def test_merge_when_inline_markup_removed_then_insert_plain_text(self):
         """Ensure translations replacing inline markup fully override original content."""
+        original_html = """
+        <html>
+            <body>
+                <p>Prefix <strong>Inner</strong> Suffix</p>
+            </body>
+        </html>
+        """
 
-def setup_method((self)):
-    """Set up test fixtures."""
+        superset, subset = self.tool.extract(original_html)
 
-def test_basic_extraction((self)):
-    """Test basic HTML extraction."""
+        # Translator replaces the entire paragraph with plain text, leaving nested entries untouched.
+        cnew_path = subset.replace("Prefix Inner Suffix", "Translated paragraph")
 
-def test_extraction_with_existing_ids((self)):
-    """Test extraction preserving existing IDs."""
+        merged = self.tool.merge(cnew_path, subset, superset, original_html)
 
-def test_basic_merge((self)):
-    """Test basic HTML merge operation."""
+        assert "Translated paragraph" in merged, "Translated text should appear in merged output"
+        assert "<strong>" not in merged, "Inline markup should be removed when translation drops it"
+</document_content>
+</document>
 
-def test_complex_html_extraction((self)):
-    """Test extraction with complex HTML structure."""
-
-def test_empty_html_handling((self)):
-    """Test handling of empty or minimal HTML."""
-
-def test_stats_functionality((self)):
-    """Test statistics functionality."""
-
-def test_custom_config((self)):
-    """Test tool with custom configuration."""
-
-def test_text_containing_element_detection((self)):
-    """Test detection of text-containing elements."""
-
-def test_merge_with_no_changes((self)):
-    """Test merge when no changes were made."""
-
-def test_element_text_extraction((self)):
-    """Test internal text extraction functionality."""
-
-def test_merge_when_inline_markup_removed_then_insert_plain_text((self)):
-    """Ensure translations replacing inline markup fully override original content."""
-
-
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/tests/test_id_generation.py
-# Language: python
+<document index="38">
+<source>tests/test_id_generation.py</source>
+<document_content>
+# this_file: tests/test_id_generation.py
+"""Tests for IDGenerator class."""
 
 import pytest
+
 from htmladapt.id_generation import IDGenerator
+
 
 class TestIDGenerator:
     """Test IDGenerator functionality."""
-    def setup_method((self)):
+
+    def setup_method(self):
         """Set up test fixtures."""
-    def test_basic_id_generation((self)):
+        self.generator = IDGenerator()
+
+    def test_basic_id_generation(self):
         """Test basic ID generation."""
-    def test_custom_prefix((self)):
+        id1 = self.generator.generate_id()
+        id2 = self.generator.generate_id()
+
+        assert id1.startswith("xhq")
+        assert id2.startswith("xhq")
+        assert id1 != id2
+
+    def test_custom_prefix(self):
         """Test ID generation with custom prefix."""
-    def test_element_hint((self)):
+        generator = IDGenerator(prefix="test_")
+        generated_id = generator.generate_id()
+
+        assert generated_id.startswith("test_")
+
+    def test_element_hint(self):
         """Test ID generation with element hint."""
-    def test_collision_detection((self)):
+        generated_id = self.generator.generate_id(element_hint="p")
+
+        assert "p_" in generated_id
+
+    def test_collision_detection(self):
         """Test collision detection and avoidance."""
-    def test_register_existing_id((self)):
+        # Generate some IDs
+        ids = [self.generator.generate_id() for _ in range(100)]
+
+        # All IDs should be unique
+        assert len(ids) == len(set(ids))
+
+    def test_register_existing_id(self):
         """Test registering existing IDs."""
-    def test_is_generated_id((self)):
+        existing_id = "existing_id"
+        self.generator.register_existing_id(existing_id)
+
+        # Generate many IDs and make sure the existing one is not used
+        generated_ids = [self.generator.generate_id() for _ in range(50)]
+        assert existing_id not in generated_ids
+
+    def test_is_generated_id(self):
         """Test checking if ID was generated."""
-    def test_reset((self)):
+        generated_id = self.generator.generate_id()
+        external_id = "external_id"
+
+        assert self.generator.is_generated_id(generated_id) is True
+        assert self.generator.is_generated_id(external_id) is False
+
+    def test_reset(self):
         """Test generator reset functionality."""
-    def test_base36_conversion((self)):
+        # Generate some IDs
+        self.generator.generate_id()
+        self.generator.generate_id()
+        self.generator.register_existing_id("test_id")
+
+        # Reset and check state
+        self.generator.reset()
+        stats = self.generator.stats
+
+        assert stats["counter"] == 0
+        assert stats["used_ids_count"] == 0
+
+    def test_base36_conversion(self):
         """Test base36 conversion."""
-    def test_stats((self)):
+        assert self.generator._to_base36(0) == "0"
+        assert self.generator._to_base36(1) == "1"
+        assert self.generator._to_base36(35) == "z"
+        assert self.generator._to_base36(36) == "10"
+        assert self.generator._to_base36(1295) == "zz"
+
+    def test_stats(self):
         """Test generator statistics."""
-    def test_id_uniqueness_stress((self)):
+        # Initial stats
+        stats = self.generator.stats
+        assert stats["counter"] == 0
+        assert stats["used_ids_count"] == 0
+
+        # Generate some IDs
+        self.generator.generate_id()
+        self.generator.generate_id()
+        self.generator.register_existing_id("external")
+
+        stats = self.generator.stats
+        assert stats["counter"] == 2
+        assert stats["used_ids_count"] == 3  # 2 generated + 1 registered
+
+    def test_id_uniqueness_stress(self):
         """Test ID uniqueness under stress."""
+        num_ids = 1000
+        ids = set()
 
-def setup_method((self)):
-    """Set up test fixtures."""
+        for _ in range(num_ids):
+            generated_id = self.generator.generate_id()
+            assert generated_id not in ids
+            ids.add(generated_id)
 
-def test_basic_id_generation((self)):
-    """Test basic ID generation."""
+        assert len(ids) == num_ids
+</document_content>
+</document>
 
-def test_custom_prefix((self)):
-    """Test ID generation with custom prefix."""
-
-def test_element_hint((self)):
-    """Test ID generation with element hint."""
-
-def test_collision_detection((self)):
-    """Test collision detection and avoidance."""
-
-def test_register_existing_id((self)):
-    """Test registering existing IDs."""
-
-def test_is_generated_id((self)):
-    """Test checking if ID was generated."""
-
-def test_reset((self)):
-    """Test generator reset functionality."""
-
-def test_base36_conversion((self)):
-    """Test base36 conversion."""
-
-def test_stats((self)):
-    """Test generator statistics."""
-
-def test_id_uniqueness_stress((self)):
-    """Test ID uniqueness under stress."""
-
-
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/tests/test_integration.py
-# Language: python
+<document index="39">
+<source>tests/test_integration.py</source>
+<document_content>
+# this_file: tests/test_integration.py
+"""Integration tests for HTMLAdapt end-to-end workflows."""
 
 import pytest
+
 from htmladapt import HTMLExtractMergeTool, ProcessingConfig
+
 
 class TestIntegration:
     """Integration tests for complete extract-merge workflows."""
-    def test_simple_translation_workflow((self)):
+
+    def test_simple_translation_workflow(self):
         """Test a simple translation workflow."""
-    def test_content_editing_workflow((self)):
+        original_html = """
+        <!DOCTYPE html>
+        <html lang="en">
+            <head>
+                <title>Welcome Page</title>
+                <meta charset="utf-8">
+            </head>
+            <body>
+                <header>
+                    <h1>Welcome to Our Website</h1>
+                    <nav>
+                        <a href="/">Home</a>
+                        <a href="/about">About Us</a>
+                        <a href="/contact">Contact</a>
+                    </nav>
+                </header>
+                <main>
+                    <section>
+                        <h2>Our Services</h2>
+                        <p>We provide excellent services to our customers.</p>
+                        <ul>
+                            <li>Web Development</li>
+                            <li>Mobile Apps</li>
+                            <li>Consulting</li>
+                        </ul>
+                    </section>
+                </main>
+                <footer>
+                    <p>&copy; 2024 Our Company. All rights reserved.</p>
+                </footer>
+            </body>
+        </html>
+        """
+
+        tool = HTMLExtractMergeTool()
+
+        # Step 1: Extract content
+        superset, subset = tool.extract(original_html)
+
+        # Verify extraction
+        assert "Welcome to Our Website" in subset
+        assert "Our Services" in subset
+        assert "Web Development" in subset
+
+        # Step 2: Simulate translation (English to Spanish)
+        translations = {
+            "Welcome to Our Website": "Bienvenido a Nuestro Sitio Web",
+            "Home": "Inicio",
+            "About Us": "Acerca de Nosotros",
+            "Contact": "Contacto",
+            "Our Services": "Nuestros Servicios",
+            "We provide excellent services to our customers.": "Proporcionamos excelentes servicios a nuestros clientes.",
+            "Web Development": "Desarrollo Web",
+            "Mobile Apps": "Aplicaciones Móviles",
+            "Consulting": "Consultoría",
+            "All rights reserved.": "Todos los derechos reservados.",
+        }
+
+        cnew_path = subset
+        for english, spanish in translations.items():
+            cnew_path = cnew_path.replace(english, spanish)
+
+        # Step 3: Merge back
+        result = tool.merge(cnew_path, subset, superset, original_html)
+
+        # Verify merge results
+        assert "Bienvenido a Nuestro Sitio Web" in result
+        assert "Nuestros Servicios" in result
+        assert "Desarrollo Web" in result
+        assert "Todos los derechos reservados" in result
+
+        # Verify structure preservation
+        assert "<!DOCTYPE html>" in result
+        assert '<html lang="en">' in result
+        assert 'charset="utf-8"' in result  # Accept both <meta charset="utf-8"> and <meta charset="utf-8"/>
+        assert "<header>" in result
+        assert "<nav>" in result
+        assert "<main>" in result
+        assert "<footer>" in result
+
+    def test_content_editing_workflow(self):
         """Test a content editing workflow."""
-    def test_partial_translation_workflow((self)):
+        original_html = """
+        <html>
+            <body>
+                <article>
+                    <h1>Old Article Title</h1>
+                    <p>This is the old introduction paragraph.</p>
+                    <p>Here is some old content that needs updating.</p>
+                    <p>This paragraph will remain unchanged.</p>
+                </article>
+            </body>
+        </html>
+        """
+
+        tool = HTMLExtractMergeTool()
+
+        # Extract
+        superset, subset = tool.extract(original_html)
+
+        # Edit content
+        cnew_path = subset.replace("Old Article Title", "New Article Title")
+        cnew_path = cnew_path.replace(
+            "This is the old introduction paragraph.",
+            "This is the updated introduction with new information.",
+        )
+        cnew_path = cnew_path.replace(
+            "Here is some old content that needs updating.",
+            "Here is the fresh, updated content.",
+        )
+
+        # Merge
+        result = tool.merge(cnew_path, subset, superset, original_html)
+
+        # Verify changes
+        assert "New Article Title" in result
+        assert "updated introduction with new information" in result
+        assert "fresh, updated content" in result
+        assert "This paragraph will remain unchanged." in result
+
+        # Verify structure preservation
+        assert "<article>" in result
+        assert result.count("<p>") == 3  # Should still have 3 paragraphs
+
+    def test_partial_translation_workflow(self):
         """Test workflow where only some content is translated."""
-    def test_workflow_with_custom_config((self)):
+        original_html = """
+        <html>
+            <body>
+                <h1>Mixed Content</h1>
+                <p>This will be translated.</p>
+                <p>This will not be translated.</p>
+                <p>Este ya está en español.</p>
+            </body>
+        </html>
+        """
+
+        tool = HTMLExtractMergeTool()
+
+        superset, subset = tool.extract(original_html)
+
+        # Only translate the first paragraph
+        cnew_path = subset.replace("This will be translated.", "Esto será traducido.")
+
+        result = tool.merge(cnew_path, subset, superset, original_html)
+
+        # Verify partial translation
+        assert "Esto será traducido." in result
+        assert "This will not be translated." in result  # Unchanged
+        assert "Este ya está en español." in result  # Unchanged
+
+    def test_workflow_with_custom_config(self):
         """Test workflow with custom configuration."""
-    def test_malformed_html_workflow((self)):
+        config = ProcessingConfig(id_prefix="trans_", simi_level=0.8)
+
+        tool = HTMLExtractMergeTool(config=config)
+
+        html = """
+        <html>
+            <body>
+                <h1>Test Title</h1>
+                <p>Test paragraph content.</p>
+            </body>
+        </html>
+        """
+
+        superset, subset = tool.extract(html)
+        cnew_path = subset.replace("Test Title", "Updated Title")
+        result = tool.merge(cnew_path, subset, superset, html)
+
+        assert "Updated Title" in result
+        # Should use custom prefix (visible in superset)
+        assert "trans_" in superset
+
+    def test_malformed_html_workflow(self):
         """Test workflow with malformed HTML."""
-    def test_large_document_workflow((self)):
+        malformed_html = """
+        <html>
+            <body>
+                <h1>Title with unclosed tag
+                <p>Paragraph without closing
+                <div>Content in div</div>
+            </body>
+        </html>
+        """
+
+        tool = HTMLExtractMergeTool()
+
+        # Should handle malformed HTML gracefully
+        superset, subset = tool.extract(malformed_html)
+        cnew_path = subset.replace("Title", "New Title")
+        result = tool.merge(cnew_path, subset, superset, malformed_html)
+
+        assert "New Title" in result
+
+    def test_large_document_workflow(self):
         """Test workflow with a larger document."""
-    def test_round_trip_preservation((self)):
+        # Generate a larger HTML document
+        sections = []
+        for i in range(20):
+            sections.append(f"""
+            <section>
+                <h2>Section {i + 1}</h2>
+                <p>This is paragraph 1 in section {i + 1}.</p>
+                <p>This is paragraph 2 in section {i + 1}.</p>
+                <p>This is paragraph 3 in section {i + 1}.</p>
+            </section>
+            """)
+
+        large_html = f"""
+        <html>
+            <body>
+                <h1>Large Document</h1>
+                {"".join(sections)}
+            </body>
+        </html>
+        """
+
+        tool = HTMLExtractMergeTool()
+
+        # Should handle large documents
+        superset, subset = tool.extract(large_html)
+
+        # Edit some content
+        cnew_path = subset.replace("Large Document", "Documento Grande")
+
+        result = tool.merge(cnew_path, subset, superset, large_html)
+
+        assert "Documento Grande" in result
+        assert result.count("<section>") == 20  # All sections preserved
+
+    def test_round_trip_preservation(self):
         """Test that content is preserved in round-trip processing."""
+        original_html = """
+        <!DOCTYPE html>
+        <html lang="en">
+            <head>
+                <title>Preservation Test</title>
+                <meta charset="utf-8">
+                <style>
+                    body { margin: 0; padding: 20px; }
+                    .highlight { background-color: yellow; }
+                </style>
+                <script>
+                    function test() {
+                        console.log('test function');
+                    }
+                </script>
+            </head>
+            <body class="main-body" data-version="1.0">
+                <header id="main-header">
+                    <h1 class="title">Test Document</h1>
+                </header>
+                <main>
+                    <p class="intro">Introduction paragraph.</p>
+                    <div class="content">
+                        <p>Content paragraph 1.</p>
+                        <p>Content paragraph 2.</p>
+                    </div>
+                </main>
+                <footer>
+                    <p>&copy; 2024</p>
+                </footer>
+            </body>
+        </html>
+        """
 
-def test_simple_translation_workflow((self)):
-    """Test a simple translation workflow."""
+        tool = HTMLExtractMergeTool()
 
-def test_content_editing_workflow((self)):
-    """Test a content editing workflow."""
+        # Extract and merge without changes
+        superset, subset = tool.extract(original_html)
+        result = tool.merge(subset, subset, superset, original_html)
 
-def test_partial_translation_workflow((self)):
-    """Test workflow where only some content is translated."""
+        # Key structural elements should be preserved
+        assert "<!DOCTYPE html>" in result
+        assert 'lang="en"' in result
+        assert "<style>" in result
+        assert "</style>" in result
+        assert "<script>" in result
+        assert "</script>" in result
+        assert 'class="main-body"' in result
+        assert 'data-version="1.0"' in result
+        assert 'id="main-header"' in result
+        assert 'class="title"' in result
+        assert 'class="intro"' in result
+        assert 'class="content"' in result
 
-def test_workflow_with_custom_config((self)):
-    """Test workflow with custom configuration."""
+        # Content should be preserved
+        assert "Test Document" in result
+        assert "Introduction paragraph." in result
+        assert "Content paragraph 1." in result
+        assert "Content paragraph 2." in result
+</document_content>
+</document>
 
-def test_malformed_html_workflow((self)):
-    """Test workflow with malformed HTML."""
-
-def test_large_document_workflow((self)):
-    """Test workflow with a larger document."""
-
-def test_round_trip_preservation((self)):
-    """Test that content is preserved in round-trip processing."""
+<document index="40">
+<source>tests/test_package.py</source>
+<document_content>
+"""Test suite for htmladapt."""
 
 
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/tests/test_package.py
-# Language: python
-
-import htmladapt
-
-def test_version(()):
+def test_version():
     """Verify package exposes version."""
+    import htmladapt
 
+    assert htmladapt.__version__
+</document_content>
+</document>
 
-# File: /Users/adam/Developer/vcs/github.twardoch/pub/htmladapt/tests/test_parser.py
-# Language: python
+<document index="41">
+<source>tests/test_parser.py</source>
+<document_content>
+# this_file: tests/test_parser.py
+"""Tests for HTMLParser class."""
 
 import pytest
+
 from htmladapt.parser import HTMLParser
+
 
 class TestHTMLParser:
     """Test HTMLParser functionality."""
-    def setup_method((self)):
+
+    def setup_method(self):
         """Set up test fixtures."""
-    def test_basic_parsing((self)):
+        self.parser = HTMLParser()
+
+    def test_basic_parsing(self):
         """Test basic HTML parsing."""
-    def test_malformed_html_parsing((self)):
+        html = "<html><body><p>Hello, World!</p></body></html>"
+        soup = self.parser.parse(html)
+
+        assert soup.find("p").get_text() == "Hello, World!"
+
+    def test_malformed_html_parsing(self):
         """Test parsing of malformed HTML."""
-    def test_empty_html_parsing((self)):
+        malformed_html = "<html><body><p>Unclosed paragraph</body></html>"
+        soup = self.parser.parse(malformed_html)
+
+        # Should still be parseable
+        assert soup.find("body") is not None
+
+    def test_empty_html_parsing(self):
         """Test parsing empty HTML."""
-    def test_bytes_input_utf8((self)):
+        empty_html = ""
+        soup = self.parser.parse(empty_html)
+
+        # Should not raise exception
+        assert soup is not None
+
+    def test_bytes_input_utf8(self):
         """Test parsing bytes input with UTF-8 encoding."""
-    def test_bytes_input_with_encoding((self)):
+        html_bytes = b"<html><body><p>Hello, World!</p></body></html>"
+        soup = self.parser.parse(html_bytes)
+
+        assert soup.find("p").get_text() == "Hello, World!"
+
+    def test_bytes_input_with_encoding(self):
         """Test parsing bytes input with specified encoding."""
-    def test_clone_preserves_parser_choice((self)):
+        html_bytes = b"<html><body><p>Hello, World!</p></body></html>"
+        soup = self.parser.parse(html_bytes, encoding="utf-8")
+
+        assert soup.find("p").get_text() == "Hello, World!"
+
+    def test_clone_preserves_parser_choice(self):
         """Cloning should reuse the parser chosen for the original soup."""
+        soup = self.parser.parse("<html><body><p>Clone</p></body></html>")
+        clone = self.parser.clone_soup(soup)
 
-def setup_method((self)):
-    """Set up test fixtures."""
-
-def test_basic_parsing((self)):
-    """Test basic HTML parsing."""
-
-def test_malformed_html_parsing((self)):
-    """Test parsing of malformed HTML."""
-
-def test_empty_html_parsing((self)):
-    """Test parsing empty HTML."""
-
-def test_bytes_input_utf8((self)):
-    """Test parsing bytes input with UTF-8 encoding."""
-
-def test_bytes_input_with_encoding((self)):
-    """Test parsing bytes input with specified encoding."""
-
-def test_clone_preserves_parser_choice((self)):
-    """Cloning should reuse the parser chosen for the original soup."""
-
+        assert hasattr(clone, "_htmladapt_parser")
+        assert clone.find("p").get_text() == "Clone"
+</document_content>
+</document>
 
 </documents>

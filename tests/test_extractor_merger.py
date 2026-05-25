@@ -160,7 +160,7 @@ class TestHTMLExtractMergeTool:
         tool = HTMLExtractMergeTool(config=config)
         html = "<html><body><p>Test text</p></body></html>"
 
-        superset, subset = tool.extract(html)
+        superset, _subset = tool.extract(html)
 
         # Should use custom prefix
         assert "custom_" in superset
@@ -179,7 +179,7 @@ class TestHTMLExtractMergeTool:
         </html>
         """
 
-        superset, subset = self.tool.extract(html)
+        _superset, subset = self.tool.extract(html)
 
         # Text-containing elements should be in subset
         assert "Text paragraph" in subset
