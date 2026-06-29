@@ -19,6 +19,7 @@ class HTMLAdaptCLI:
 
     def version(self) -> None:
         """Display version information."""
+        print(f"htmladapt {__version__}")
 
     def extract(
         self,

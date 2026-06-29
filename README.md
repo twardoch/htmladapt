@@ -396,25 +396,21 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/htmladapt.git
+git clone https://github.com/twardoch/htmladapt.git
 cd htmladapt
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-
-# Install in development mode
-pip install -e ".[dev,test,llm]"
+# Install with uv (recommended)
+uv pip install -e ".[dev,test]"
 
 # Run tests
-pytest
+uvx hatch test
 
 # Run type checking
-mypy htmladapt/
+uvx mypy src/htmladapt
 
-# Format code
-black htmladapt/
-ruff check htmladapt/
+# Format and lint
+uvx ruff format src/htmladapt tests
+uvx ruff check src/htmladapt tests
 ```
 
 ### Code Structure
@@ -448,20 +444,19 @@ MIT License - see [LICENSE](LICENSE) file.
 
 ## Support
 
-- **Documentation**: [https://htmladapt.readthedocs.io](https://htmladapt.readthedocs.io)
-- **Issues**: [GitHub Issues](https://github.com/yourusername/htmladapt/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/htmladapt/discussions)
-- **Email**: support@htmladapt.dev
+- **Documentation**: [https://twardoch.github.io/htmladapt](https://twardoch.github.io/htmladapt)
+- **Issues**: [GitHub Issues](https://github.com/twardoch/htmladapt/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/twardoch/htmladapt/discussions)
 
 ## Citation
 
 For academic use:
 
 ```bibtex
-@software{htmladapt2024,
+@software{htmladapt2025,
   title={HTMLAdapt: HTML Content Extraction and Merge Tool},
-  author={Your Name},
-  year={2024},
-  url={https://github.com/yourusername/htmladapt}
+  author={Twardoch, Adam},
+  year={2025},
+  url={https://github.com/twardoch/htmladapt}
 }
 ```
